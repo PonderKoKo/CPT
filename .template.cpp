@@ -1,23 +1,29 @@
-
 #include <bits/stdc++.h>
 
-#define rep(a, b)   for(int a = 0; a < (b); ++a)
-#define all(a)      (a).begin(),(a).end()
-#define endl        '\n'
+/* clang-format off */
+
+#define rep(a, b) for (u32 a = 0; a < (b); ++a)
+#define ALL(a) (a).begin(), (a).end()
+#define many int t; cin >> t; while (t--)
+#define yesno cout << (solve() ? "YES" : "NO") << '\n'
+#define print cout << solve() << '\n'
+#define call solve()
 
 using namespace std;
-using Graph = vector<vector<int>>;
-using ll = long long;
+
+[[maybe_unused]] typedef long int i32;
+[[maybe_unused]] typedef unsigned long int u32;
+[[maybe_unused]] typedef long long int i64;
+[[maybe_unused]] typedef unsigned long long int u64;
+
+void solve() {
+	
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     cout.precision(10);
-
-
-    //content
-
-
+    call;
     return 0;
 }
-

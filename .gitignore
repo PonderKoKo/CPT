@@ -1,7 +1,5 @@
-
-# own code
-CPcode/
-
+source/example
+source/input.txt
 # clion builds
 cmake-build-*
 

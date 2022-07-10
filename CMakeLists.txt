@@ -14,6 +14,8 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         -fsanitize=address,undefined
         -fno-omit-frame-pointer
         -fno-sanitize-recover=all
+	# optimization level
+	-O2
     )
     add_link_options(
             -fsanitize=address,undefined
@@ -22,4 +24,4 @@ if (CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 add_subdirectory(source)
-
+add_subdirectory(utils)
