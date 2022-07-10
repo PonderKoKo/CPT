@@ -1,4 +1,5 @@
 source/example
+source/example.cpp
 source/input.txt
 # clion builds
 cmake-build-*
