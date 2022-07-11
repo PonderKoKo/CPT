@@ -4,7 +4,7 @@ competitive programming template
 TL;DR: write all your code in `source/example.cpp`, reset the file when done and depend on the judging systems to keep your code :)
 
 ## Fork
-This fork changes the template and adds some files with useful functions and classes as I createthem.
+This fork changes the template and adds some files with useful functions and classes as I create them.
 
 ## Linux
 
