@@ -1,10 +1,11 @@
-// https://cp-algorithms.com/string/z-function.html
-vector<i32> z_function(string s) {
-    i32 n = (i32) s.length();
-    vector<i32> z(n);
-    for (i32 i = 1, l = 0, r = 0; i < n; ++i) {
+#include "macros.h"
+
+// z function
+vector<u32> z_function(string s, u32 n /* size of s */) {
+    vector<u32> z(n);
+    for (u32 i = 1, l = 0, r = 0; i < n; ++i) {
         if (i <= r)
-            z[i] = min (r - i + 1, z[i - l]);
+            z[i] = min(r - i + 1, z[i - l]);
         while (i + z[i] < n && s[z[i]] == s[i + z[i]])
             ++z[i];
         if (i + z[i] - 1 > r)

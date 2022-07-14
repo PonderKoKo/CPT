@@ -1,9 +1,4 @@
-#include <bits/stdc++.h>
-
-using namespace std;
-
-[[maybe_unused]] typedef long long int i64;
-[[maybe_unused]] typedef unsigned long long int u64;
+#include "macros.h"
 
 template <i64 Modulo>
 class modular {
@@ -21,11 +16,9 @@ private:
     }
 
 public:
-    modular (const modular& m)
-            : _a (m._a)
-    { }
+    modular (const modular& m = modular(0)) : _a(m._a) { }
 
-    modular (const i64& a = 0)
+    modular (const i64& a)
             : _a (a)
     { normalize(); }
 

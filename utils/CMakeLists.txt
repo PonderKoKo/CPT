@@ -1,2 +1,3 @@
-add_executable(modular modular.cpp)
-add_executable(strings strings.cpp)
+add_executable(modular modular.cpp macros.h)
+add_executable(strings strings.cpp macros.h)
+add_executable(traversal traversal.cpp macros.h)
