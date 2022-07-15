@@ -105,7 +105,7 @@ public:
         return stream << m._a;
     }
 
-    friend auto operator >> (std::istream& stream, modular& m) {
+    friend std::istream& operator >> (std::istream& stream, modular& m) {
         stream >> m._a;
         m.normalize();
         return stream;
