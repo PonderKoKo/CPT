@@ -15,4 +15,5 @@ using i32 = long int;
 using u32 = unsigned long int;
 using i64 = long long int;
 using u64 = unsigned long long int;
+using Graph = vector<vector<u32>>;
 #endif

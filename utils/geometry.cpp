@@ -63,44 +63,47 @@ struct Vector {
     }
 };
 
-// https://cp-algorithms.com/geometry/nearest_points.html
-// This only returns the minimum square distance but can easily be altered
-// Points needs to be passed in presorted by x coordinate, l = 0, r = n
+/* https://cp-algorithms.com/geometry/nearest_points.html
+ * Complexity O(n log n)
+ * This only returns the minimum square distance but can be altered, only tested for i64
+ * First Call: l = 0, r = n, points sorted by x, buffer.size() = n
+ */
 template<typename coordinate>
 i64 closest_pair(u32 l, u32 r, vector<Vector<coordinate>> &points, vector<Vector<coordinate>> &buffer) {
-#define threshold 3
 #define SOME(a, l, r) (a).begin() + (l), (a).begin() + (r)
-#define update(x) min_square_dist = min(min_square_dist, x)
+#define UPDATE(x) min_square_dist = min(min_square_dist, x)
 #define SQUARE(a) ((a) * (a))
 #define CMP_Y [] (const Vector<coordinate>& a, const Vector<coordinate>& b) { return a.y < b.y; }
     i64 min_square_dist = 1'000'000'000'000'000'000;
-    if (r - l <= threshold) {
+    if (r - l <= 3) {
         for (u32 i = l; i < r; ++i)
             for (u32 j = i + 1; j < r; ++j)
-                update((points[i] - points[j]).square_norm());
+                UPDATE((points[i] - points[j]).square_norm());
         sort(SOME(points, l, r), CMP_Y);
         return min_square_dist;
     }
     u32 mid = (l + r) / 2;
     i64 mid_x = points[mid].x;
-    update(closest_pair(l, mid, points, buffer));
-    update(closest_pair(mid, r, points, buffer));
+    UPDATE(closest_pair(l, mid, points, buffer));
+    UPDATE(closest_pair(mid, r, points, buffer));
     merge(SOME(points, l, mid), SOME(points, mid, r), buffer.begin(), CMP_Y);
     copy(SOME(buffer, 0, r - l), points.begin() + l);
     i32 tsz = 0;
     for (u32 i = l; i < r; ++i) {
         if (SQUARE(points[i].x - mid_x) < min_square_dist) {
             for (i32 j = tsz - 1; j >= 0 && SQUARE(points[i].y - buffer[j].y) < min_square_dist; --j)
-                update((points[i] - buffer[j]).square_norm());
+                UPDATE((points[i] - buffer[j]).square_norm());
             buffer[tsz++] = points[i];
         }
     }
     return min_square_dist;
-#undef threshold
 #undef SOME
-#undef update
+#undef UPDATE
 #undef SQUARE
+#undef CMP_Y
 }
+
+
 
 int main() {
     ios::sync_with_stdio(false);

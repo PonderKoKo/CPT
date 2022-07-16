@@ -11,10 +11,11 @@
 
 using namespace std;
 
-[[maybe_unused]] typedef long int i32;
-[[maybe_unused]] typedef unsigned long int u32;
-[[maybe_unused]] typedef long long int i64;
-[[maybe_unused]] typedef unsigned long long int u64;
+using i32 = long int;
+using u32 = unsigned long int;
+using i64 = long long int;
+using u64 = unsigned long long int;
+using Graph = vector<vector<u32>>;
 
 void solve() {
 	
