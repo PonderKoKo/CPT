@@ -1,18 +1,17 @@
 #include "macros.h"
 
 // Sadly Ranges is only available in C++20, using that with Algorithms library would be the cleanest.
-/* Assuming the predicate p is monotonic (false then true),
+/* Assuming the predicate p: [lo, hi) -> bool is monotonic (false then true),
  * returns the index of the first element in the range [lo, hi) that satisfies p.
- * If no such element is found, returns hi. */
+ * If no such element is found, returns hi. This can be imagined as stipulating that p(hi) is true. */
 template<typename num, typename Function>
 num binary_weapon(num lo, num hi, const Function& p) {
     while (lo < hi) {
         num mid = (lo + hi) / 2;
-        if (p(mid)) {
+        if (p(mid))
             hi = mid;
-        } else {
+        else
             lo = mid + 1;
-        }
     }
     return lo;
 }
