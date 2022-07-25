@@ -4,6 +4,9 @@ template<typename coordinate>
 struct Vector {
     coordinate x, y;
     Vector(coordinate a = 0, coordinate b = 0) : x(a), y(b) {}
+
+    static constexpr Vector null() { return Vector(0, 0); }
+
     Vector operator+(const Vector& other) const {
         return Vector(x + other.x, y + other.y);
     }
@@ -12,6 +15,9 @@ struct Vector {
     }
     Vector operator*(const coordinate& k) const {
         return Vector(x * k, y * k);
+    }
+    friend Vector operator*(const coordinate& k, const Vector& v) {
+        return Vector(k * v.x, k * v.y);
     }
 
     /* Dot Product
@@ -23,9 +29,20 @@ struct Vector {
     coordinate operator * (const Vector& other) const {
         return x * other.x + y * other.y;
     }
-    coordinate operator % (const Vector& other) const { // cross product
+    /* Cross Product
+     * a cross b = a.norm() * b.norm() * sin(angle)
+     * < 0 : clockwise
+     * = 0 : colinear
+     * > 0 : counterclockwise
+     */
+    coordinate operator % (const Vector& other) const {
         return x * other.y - y * other.x;
     }
+    Vector operator - () const {
+        return Vector(-x, -y);
+    }
+
+
 
     friend std::istream& operator >> (std::istream& stream, Vector& u) {
         return stream >> u.x >> u.y;
@@ -38,49 +55,129 @@ struct Vector {
         return !(*this == other);
     }
     bool operator < (const Vector& other) const {
-        return x < other.x || (x == other.x && y < other.y);
-    }
-    Vector operator - () const {
-        return Vector(-x, -y);
+        return make_pair(x, y) < make_pair(other.x, other.y);
     }
 
-    [[nodiscard]] coordinate square_norm() const {
+    bool operator > (const Vector& other) const {
+        return other < *this;
+    }
+
+    enum class angle {
+        zero,
+        acute,
+        right,
+        obtuse,
+        straight,
+        acute_reflex,
+        right_reflex,
+        obtuse_reflex,
+        undefined
+    };
+
+    // Counterclockwise Angle
+    angle operator ^ (const Vector& other) const {
+        if (*this == null() || other == null())
+            return angle::undefined;
+        i64 dot = *this * other;
+        i64 cross = *this % other;
+        if (cross == 0) {
+            if (dot > 0)
+                return angle::zero;
+            else /* dot < 0 ### = 0 is impossible */
+                return angle::straight;
+        } else if (cross > 0) {
+            if (dot < 0)
+                return angle::obtuse;
+            else if (dot == 0)
+                return angle::right;
+            else /* dot > 0 */
+                return angle::acute;
+        } else {
+            if (dot < 0)
+                return angle::acute_reflex;
+            else if (dot == 0)
+                return angle::right_reflex;
+            else /* dot > 0 */
+                return angle::obtuse_reflex;
+        }
+        assert(0);
+    }
+
+    friend bool angle_interval(angle lo, angle hi, angle a, bool lo_inclusive = true, bool hi_inclusive = false) {
+        if (lo == angle::undefined || hi == angle::undefined || a == angle::undefined)
+            return false;
+        if (lo <= hi) {
+            if (lo_inclusive) {
+                if (hi_inclusive)
+                    return lo <= a && a <= hi;
+                else
+                    return lo <= a && a < hi;
+            } else {
+                if (hi_inclusive)
+                    return lo < a && a <= hi;
+                else
+                    return lo < a && a < hi;
+            }
+        } else {
+            if (lo_inclusive) {
+                if (hi_inclusive)
+                    return lo <= a || a <= hi;
+                else
+                    return lo <= a || a < hi;
+            } else {
+                if (hi_inclusive)
+                    return lo < a || a <= hi;
+                else
+                    return lo < a || a < hi;
+            }
+        }
+    }
+
+    // Square Norm, just Dot Product with itself
+    [[nodiscard]] i64 square_norm() const {
         return x * x + y * y;
+    }
+
+    /* non-integer methods
+    // Counterclockwise Angle (not sure if this is even correct
+    double operator ^ (const ContinuousVector& other) const {
+        return atan2(*this % other, *this * other);
     }
 
     [[nodiscard]] double norm() const {
         return sqrt(x * x + y * y);
     }
 
-    [[nodiscard]] double distanceToLine(const Vector& a, const Vector& b) const {
-        Vector ab = b - a;
-        Vector ac = *this - a;
-        return abs(ac % ab) / ab.norm();
+    [[nodiscard]] double distanceToLine(const ContinuousVector& a, const ContinuousVector& b) const {
+        ContinuousVector ab = b - a;
+        ContinuousVector ac = *this - a;
+        return abs(ac % ab) / ab.metric();
     }
 
-    [[nodiscard]] double distanceToPoint(const Vector& p) const {
-        return (*this - p).norm();
-    }
+    // Rotates Counterclockwise, works with negative angles
+    [[nodiscard]] Vector rotate(double angle) const {
+        return ContinuousVector(x * cos(angle) + y * sin(angle), -x * sin(angle) + y * cos(angle));
+    } */
 };
 
 /* https://cp-algorithms.com/geometry/nearest_points.html
  * Complexity O(n log n)
- * This only returns the minimum square distance but can be altered, only tested for i64
+ * Square Norm just needs to be anything monotonous to the distance
  * First Call: l = 0, r = n, points sorted by x, buffer.size() = n
  */
 template<typename coordinate>
 i64 closest_pair(u32 l, u32 r, vector<Vector<coordinate>> &points, vector<Vector<coordinate>> &buffer) {
 #define SOME(a, l, r) (a).begin() + (l), (a).begin() + (r)
-#define UPDATE(x) min_square_dist = min(min_square_dist, x)
+#define UPDATE(x) min_sqr_dist = min(min_sqr_dist, x)
 #define SQUARE(a) ((a) * (a))
-#define CMP_Y [] (const Vector<coordinate>& a, const Vector<coordinate>& b) { return a.y < b.y; }
-    i64 min_square_dist = 1'000'000'000'000'000'000;
+#define CMP_Y [] (const Vector<i64>& a, const Vector<i64>& b) { return a.y < b.y; }
+    i64 min_sqr_dist = 1'000'000'000'000'000'000;
     if (r - l <= 3) {
         for (u32 i = l; i < r; ++i)
             for (u32 j = i + 1; j < r; ++j)
                 UPDATE((points[i] - points[j]).square_norm());
         sort(SOME(points, l, r), CMP_Y);
-        return min_square_dist;
+        return min_sqr_dist;
     }
     u32 mid = (l + r) / 2;
     i64 mid_x = points[mid].x;
@@ -90,19 +187,60 @@ i64 closest_pair(u32 l, u32 r, vector<Vector<coordinate>> &points, vector<Vector
     copy(SOME(buffer, 0, r - l), points.begin() + l);
     i32 tsz = 0;
     for (u32 i = l; i < r; ++i) {
-        if (SQUARE(points[i].x - mid_x) < min_square_dist) {
-            for (i32 j = tsz - 1; j >= 0 && SQUARE(points[i].y - buffer[j].y) < min_square_dist; --j)
+        if (SQUARE(points[i].x - mid_x) < min_sqr_dist) {
+            for (i32 j = tsz - 1; j >= 0 && SQUARE(points[i].y - buffer[j].y) < min_sqr_dist; --j)
                 UPDATE((points[i] - buffer[j]).square_norm());
             buffer[tsz++] = points[i];
         }
     }
-    return min_square_dist;
+    return min_sqr_dist;
 #undef SOME
 #undef UPDATE
 #undef SQUARE
 #undef CMP_Y
 }
 
+/* Monotone Chain Algorithm for Convex Hull
+ * Complexity O(n log n)
+ * https://cp-algorithms.com/geometry/convex_hull.html
+ * Assuming points are pairwise distinct
+ */
+template<typename coordinate>
+void convex_hull(vector<Vector<coordinate>>& a, bool include_colinear = false) {
+using angle = typename Vector<coordinate>::angle;
+    if (a.size() == 1)
+        return;
+
+    sort(a.begin(), a.end());
+    auto p1 = a[0], p2 = a.back();
+    vector<Vector<coordinate>> up, down;
+    up.push_back(p1);
+    down.push_back(p1);
+    for (u32 i = 1; i < a.size(); ++i) {
+        angle theta = (a[i] - p1) ^ (p2 - p1);
+        assert(theta != angle::undefined);
+        if (i == a.size() - 1 || angle_interval(angle::straight, angle::zero, theta, include_colinear, include_colinear)) {
+            while (up.size() >= 2 && angle_interval(angle::zero, angle::straight, (up[up.size() - 1] - up[up.size() - 2]) ^ (a[i] - up[up.size() - 2]), !include_colinear, !include_colinear))
+                up.pop_back();
+            up.push_back(a[i]);
+        }
+        if (i == a.size() - 1 || angle_interval(angle::zero, angle::straight, theta, include_colinear, include_colinear)) {
+            while (down.size() >= 2 && angle_interval(angle::straight, angle::zero, (down[down.size() - 1] - down[down.size() - 2]) ^ (a[i] - down[down.size() - 2]), !include_colinear, !include_colinear))
+                down.pop_back();
+            down.push_back(a[i]);
+        }
+    }
+
+    if (include_colinear && up.size() == a.size()) {
+        reverse(a.begin(), a.end());
+        return;
+    }
+    a.clear();
+    for (int i = 0; i < (int)up.size(); i++)
+        a.push_back(up[i]);
+    for (int i = down.size() - 2; i > 0; i--)
+        a.push_back(down[i]);
+}
 
 
 int main() {
@@ -113,8 +251,7 @@ int main() {
         vector<Vector<i64>> points = {{0, 0}, {5, 4}, {2, 2}, {4, 1}};
         sort(ALL(points));
         vector<Vector<i64>> buffer(points.size());
-        assert(closest_pair(0, points.size(), points, buffer) == 5);
+        assert(closest_pair(0, points.size(), points, buffer) == 5 && "Closest Pair on DiscreteVector");
     }
-    
     return 0;
 }
