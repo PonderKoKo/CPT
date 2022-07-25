@@ -27,3 +27,4 @@ endif()
 
 add_subdirectory(source)
 add_subdirectory(utils)
+add_subdirectory(cf)
