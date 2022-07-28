@@ -1,0 +1,2 @@
+- Read the entire input for each test case.
+- Like seriously ... I went back through my submissions on Codeforces where I gave up on finding the problem and it's all this!
