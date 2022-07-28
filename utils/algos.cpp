@@ -16,6 +16,15 @@ num binary_weapon(num lo, num hi, const Function& p) {
     return lo;
 }
 
+u32 count_bits(u64 n) {
+    u32 count = 0;
+    while (n) {
+        count += n & 1;
+        n >>= 1;
+    }
+    return count;
+}
+
 bool binary_weapon_test_helper(i64 x) { return x >= 0; }
 
 int main() {
