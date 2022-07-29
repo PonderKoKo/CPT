@@ -3,8 +3,8 @@
 template <i64 Modulo>
 class modular {
     static_assert(Modulo > 0, "Modulo must be positive");
-
 private:
+    static vector<modular> factorials;
     i64 _a;
     const i64 _m = Modulo;
 
@@ -69,9 +69,20 @@ public:
 
     modular operator + () const { return *this; }
     modular operator - () const { return modular(-_a); }
-    // Fermat Inverse, assuming m is prime, untested
+    // Fermat Inverse, assuming m is prime
     modular operator ! () const {
         return *this ^ (_m - 2);
+    }
+
+    static modular factorial(const u32& n) {
+        while (factorials.size() <= n)
+            factorials.push_back(factorials.back() * modular(static_cast<const i64>(factorials.size())));
+        return factorials[n];
+    }
+
+    static modular binom(const u32& n, const u32& k) {
+        assert(k <= n);
+        return factorial(n) / (factorial(k) * factorial(n - k));
     }
 
     friend modular operator + (modular self, const modular& other) { return self += other; }
@@ -111,11 +122,14 @@ public:
         return stream;
     }
 };
+template<i64 modulo> vector<modular<modulo>> modular<modulo>::factorials = {1};
+
+using mod = modular<1000000007>;
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     cout.precision(10);
-
+    assert(mod::factorial(10000) == 531950728);
     return 0;
 }
