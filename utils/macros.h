@@ -3,7 +3,7 @@
 #include <bits/stdc++.h>
 
 #define rep(a, b) for (u32 a = 0; a < (b); ++a)
-#define ALL(a) (a).begin(), (a).end()
+#define all(a) (a).begin(), (a).end()
 #define many int t; cin >> t; while (t--)
 #define yesno cout << (solve() ? "YES" : "NO") << '\n'
 #define print cout << solve() << '\n'
