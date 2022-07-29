@@ -64,8 +64,8 @@ public:
 
     modular& operator ++ () { return *this += 1; }
     modular& operator -- () { return *this -= 1; }
-    const modular  operator ++ (int) const { const modular result (*this); ++*this; return result; }
-    const modular  operator -- (int) const { const modular result (*this); --*this; return result; }
+    const modular operator ++ (int) { const modular result (*this); ++*this; return result; }
+    const modular operator -- (int) { const modular result (*this); --*this; return result; }
 
     modular operator + () const { return *this; }
     modular operator - () const { return modular(-_a); }
@@ -116,7 +116,6 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     cout.precision(10);
-
 
     return 0;
 }
