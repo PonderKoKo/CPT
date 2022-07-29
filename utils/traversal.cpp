@@ -1,6 +1,6 @@
 #include "macros.h"
 
-void bfs(u32 source, vector<vector<u32>>& adj, u32 n /* vertices */) {
+void bfs(u32 source, const Graph& adj, u32 n) {
     queue<u32> q;
     q.push(source);
     vector<i32> dist(n, -1);
@@ -17,7 +17,10 @@ void bfs(u32 source, vector<vector<u32>>& adj, u32 n /* vertices */) {
     }
 }
 
-void dfs(u32 source, vector<vector<u32>>& adj, vector<bool>& visited /* false initialized */) {
+/*
+ * visited should be false-initialized
+ */
+void dfs(u32 source, const Graph& adj, vector<bool>& visited) {
     // Do something
     visited[source] = true;
     for (u32 v : adj[source]) {
@@ -27,26 +30,27 @@ void dfs(u32 source, vector<vector<u32>>& adj, vector<bool>& visited /* false in
 }
 
 // Unrooted, undirected
-void treeDFS(u32 node, u32 parent /* pass as source for root */, vector<vector<u32>>& adj /*, dp-array */) {
+void treeDFS(u32 node, u32 parent, const Graph& adj) {
     // Pre-order
     for (u32 v : adj[node]) {
         if (v != parent) {
-            treeDFS(v, node, adj /*, dp-array */);
+            treeDFS(v, node, adj);
         }
     }
     // Post-order
 }
 
 // Rooted and directed
-void treeDFS(u32 node, vector<vector<u32>>& children /*, dp-array */) {
+void treeDFS(u32 node, const Graph& children) {
     // Pre-order
     for (u32 v : children[node]) {
-        treeDFS(v, children /*, dp-array */);
+        treeDFS(v, children);
     }
     // Post-order
 }
 
-vector<u32> topo_sort (vector<vector<u32>>& adj /* directed */, u32 n /* vertices */) {
+
+vector<u32> topo_sort (const Graph& adj, u32 n) {
     vector<u32> in_degree(n, 0);
     for (const auto &v : adj)
         for (const auto u : v)
