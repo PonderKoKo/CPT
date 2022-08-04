@@ -127,9 +127,6 @@ template<i64 modulo> vector<modular<modulo>> modular<modulo>::factorials = {1};
 using mod = modular<1000000007>;
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    cout.precision(10);
     assert(mod::factorial(10000) == 531950728);
     return 0;
 }
