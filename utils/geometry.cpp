@@ -4,8 +4,7 @@ template<typename coordinate>
 struct Vector {
     coordinate x, y;
     Vector(coordinate a = 0, coordinate b = 0) : x(a), y(b) {}
-
-    static constexpr Vector null() { return Vector(0, 0); }
+    static inline Vector null = Vector(0, 0);
 
     Vector operator+(const Vector& other) const {
         return Vector(x + other.x, y + other.y);
@@ -32,7 +31,7 @@ struct Vector {
     /* Cross Product
      * a cross b = a.norm() * b.norm() * sin(angle)
      * < 0 : clockwise
-     * = 0 : colinear
+     * = 0 : collinear
      * > 0 : counterclockwise
      */
     coordinate operator % (const Vector& other) const {
@@ -139,7 +138,7 @@ struct Vector {
     }
 
     /* non-integer methods
-    // Counterclockwise Angle (not sure if this is even correct
+    // Counterclockwise Angle (not sure if this is even correct)
     double operator ^ (const ContinuousVector& other) const {
         return atan2(*this % other, *this * other);
     }
@@ -162,16 +161,22 @@ struct Vector {
 
 /* https://cp-algorithms.com/geometry/nearest_points.html
  * Complexity O(n log n)
- * Square Norm just needs to be anything monotonous to the distance
- * First Call: l = 0, r = n, points sorted by x, buffer.size() = n
+ * Returns the square distance of the two closest points.
  */
 template<typename coordinate>
-i64 closest_pair(u32 l, u32 r, vector<Vector<coordinate>> &points, vector<Vector<coordinate>> &buffer) {
-#define SOME(a, l, r) (a).begin() + (l), (a).begin() + (r)
+coordinate closest_pair(vector<Vector<coordinate>> points) {
+    sort(all(points));
+    vector<Vector<coordinate>> buffer(points.size());
+    return closest_pair(0, points.size(), points, buffer);
+}
+
+template<typename coordinate>
+coordinate closest_pair(u32 l, u32 r, vector<Vector<coordinate>> &points, vector<Vector<coordinate>> &buffer) {
+#define SOME(a, l, r) next((a).begin(), l), next((a).begin(), r)
 #define UPDATE(x) min_sqr_dist = min(min_sqr_dist, x)
 #define SQUARE(a) ((a) * (a))
-#define CMP_Y [] (const Vector<i64>& a, const Vector<i64>& b) { return a.y < b.y; }
-    i64 min_sqr_dist = 1'000'000'000'000'000'000;
+#define CMP_Y [] (const Vector<coordinate>& a, const Vector<coordinate>& b) { return a.y < b.y; }
+    coordinate min_sqr_dist = numeric_limits<coordinate>::max();
     if (r - l <= 3) {
         for (u32 i = l; i < r; ++i)
             for (u32 j = i + 1; j < r; ++j)
@@ -206,7 +211,7 @@ i64 closest_pair(u32 l, u32 r, vector<Vector<coordinate>> &points, vector<Vector
  * Assuming points are pairwise distinct
  */
 template<typename coordinate>
-void convex_hull(vector<Vector<coordinate>>& a, bool include_colinear = false) {
+void convex_hull(vector<Vector<coordinate>>& a, bool include_collinear = false) {
 using angle = typename Vector<coordinate>::angle;
     if (a.size() == 1)
         return;
@@ -219,39 +224,49 @@ using angle = typename Vector<coordinate>::angle;
     for (u32 i = 1; i < a.size(); ++i) {
         angle theta = (a[i] - p1) ^ (p2 - p1);
         assert(theta != angle::undefined);
-        if (i == a.size() - 1 || angle_interval(angle::straight, angle::zero, theta, include_colinear, include_colinear)) {
-            while (up.size() >= 2 && angle_interval(angle::zero, angle::straight, (up[up.size() - 1] - up[up.size() - 2]) ^ (a[i] - up[up.size() - 2]), !include_colinear, !include_colinear))
+        if (i == a.size() - 1 || angle_interval(angle::straight, angle::zero, theta, include_collinear, include_collinear)) {
+            while (up.size() >= 2 && angle_interval(angle::zero, angle::straight, (up[up.size() - 1] - up[up.size() - 2]) ^ (a[i] - up[up.size() - 2]), !include_collinear, !include_collinear))
                 up.pop_back();
             up.push_back(a[i]);
         }
-        if (i == a.size() - 1 || angle_interval(angle::zero, angle::straight, theta, include_colinear, include_colinear)) {
-            while (down.size() >= 2 && angle_interval(angle::straight, angle::zero, (down[down.size() - 1] - down[down.size() - 2]) ^ (a[i] - down[down.size() - 2]), !include_colinear, !include_colinear))
+        if (i == a.size() - 1 || angle_interval(angle::zero, angle::straight, theta, include_collinear, include_collinear)) {
+            while (down.size() >= 2 && angle_interval(angle::straight, angle::zero, (down[down.size() - 1] - down[down.size() - 2]) ^ (a[i] - down[down.size() - 2]), !include_collinear, !include_collinear))
                 down.pop_back();
             down.push_back(a[i]);
         }
     }
 
-    if (include_colinear && up.size() == a.size()) {
+    // Everything is on a line and both up and down are identical.
+    if (include_collinear && up.size() == a.size()) {
         reverse(a.begin(), a.end());
         return;
     }
     a.clear();
+    // Don't use start and end from up and down, because they are the same.
     for (int i = 0; i < (int)up.size(); i++)
         a.push_back(up[i]);
     for (int i = down.size() - 2; i > 0; i--)
         a.push_back(down[i]);
 }
 
+/* Shoelace Formula
+ * Complexity O(n)
+ * Returns double the area to respect integer types.
+ */
+template<typename coordinate>
+coordinate double_area(const vector<Vector<coordinate>>& a) {
+    coordinate area = 0;
+    for (u32 i = 0; i < a.size(); ++i)
+        area += a[i] % a[(i + 1) % a.size()];
+    return abs(area);
+}
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    cout.precision(10);
-    { // Closest Pair
-        vector<Vector<i64>> points = {{0, 0}, {5, 4}, {2, 2}, {4, 1}};
-        sort(ALL(points));
-        vector<Vector<i64>> buffer(points.size());
-        assert(closest_pair(0, points.size(), points, buffer) == 5 && "Closest Pair on DiscreteVector");
-    }
+    vector<Vector<i64>> points = {{0, 0}, {4, 1}, {5, 4}, {2, 2}};
+    vector<Vector<i64>> points2 = {{4,1}, {7,3}, {5,5}, {2,4}, {4,3}};
+
+    assert(closest_pair(points) == 5 && "Closest Pair on DiscreteVector");
+    assert(double_area(points) == 13 && "Shoelace Formula on DiscreteVector — 1");
+    assert(double_area(points2) == 17 && "Shoelace Formula on DiscreteVector — 2");
     return 0;
 }
