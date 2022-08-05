@@ -1,12 +1,11 @@
 #include "macros.h"
 
-// z function
-vector<u32> z_function(string s, u32 n /* size of s */) {
-    vector<u32> z(n);
-    for (u32 i = 1, l = 0, r = 0; i < n; ++i) {
+vector<u32> z_function(string s) {
+    vector<u32> z(s.size());
+    for (u32 i = 1, l = 0, r = 0; i < s.size(); ++i) {
         if (i <= r)
             z[i] = min(r - i + 1, z[i - l]);
-        while (i + z[i] < n && s[z[i]] == s[i + z[i]])
+        while (i + z[i] < s.size() && s[z[i]] == s[i + z[i]])
             ++z[i];
         if (i + z[i] - 1 > r)
             l = i, r = i + z[i] - 1;
@@ -15,18 +14,17 @@ vector<u32> z_function(string s, u32 n /* size of s */) {
 }
 
 // https://cp-algorithms.com/string/prefix-function.html
-vector<i32> prefix_function(string s) {
-    i32 n = (i32)s.length();
-    vector<i32> pi(n);
-    for (i32 i = 1; i < n; i++) {
-        i32 j = pi[i-1];
+vector<u32> prefix_function(string s) {
+    vector<u32> p(s.size());
+    for (u32 i = 1; i < s.size(); i++) {
+        u32 j = p[i-1];
         while (j > 0 && s[i] != s[j])
-            j = pi[j-1];
+            j = p[j-1];
         if (s[i] == s[j])
             j++;
-        pi[i] = j;
+        p[i] = j;
     }
-    return pi;
+    return p;
 }
 
 

@@ -49,7 +49,6 @@ public:
     modular& operator /= (const modular& other)
     { return *this *= !other; }
 
-    // Binary Exponentiation, untested
     modular& operator ^= (u64 power) {
         auto base = *this;
         *this = 1;

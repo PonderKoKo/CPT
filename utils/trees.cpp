@@ -151,14 +151,11 @@ public:
         return a[node];
     }
 
-    /* Assuming p: query([x, n)) × index -> bool is monotonic in x.
-     * Returns the index of the first element x, such that query([x, n)) is true.
-     * If no such element exists, returns n. ? actually n + 1 (see last sentence)
+    /* Assuming p: query([ql, x)) × interval_length -> bool is monotonic in x.
+     * Returns the index of the first element x, such that query([ql, x)) is true.
+     * If no such element exists, returns n + 1
      * Complexity is O(log n) rather than O((log n)^2) by just binary searching from the outside
-     * It might be possible to also expose the qr parameter, but I'm not sure yet.
-     * Thank you bicsi, https://codeforces.com/blog/entry/83883
-     * I don't understand this yet.
-     * */
+     */
     template<typename Function>
     u32 search(u32 ql, const Function& p) {
         T acc_val = q_neutral;
