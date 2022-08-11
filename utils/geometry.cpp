@@ -75,7 +75,7 @@ struct Vector {
 
     // Counterclockwise Angle
     angle operator ^ (const Vector& other) const {
-        if (*this == null() || other == null())
+        if (*this == null || other == null)
             return angle::undefined;
         i64 dot = *this * other;
         i64 cross = *this % other;
@@ -133,30 +133,30 @@ struct Vector {
     }
 
     // Square Norm, just Dot Product with itself
-    [[nodiscard]] i64 square_norm() const {
+    [[nodiscard]] coordinate square_norm() const {
         return x * x + y * y;
     }
 
-    /* non-integer methods
+    [[nodiscard]] coordinate manhattan_norm() const {
+        return abs(x) + abs(y);
+    }
+
+    /*
     // Counterclockwise Angle (not sure if this is even correct)
-    double operator ^ (const ContinuousVector& other) const {
+    double operator ^ (const Vector<double>& other) const {
         return atan2(*this % other, *this * other);
-    }
+    } */
 
-    [[nodiscard]] double norm() const {
-        return sqrt(x * x + y * y);
-    }
-
-    [[nodiscard]] double distanceToLine(const ContinuousVector& a, const ContinuousVector& b) const {
-        ContinuousVector ab = b - a;
-        ContinuousVector ac = *this - a;
-        return abs(ac % ab) / ab.metric();
+    [[nodiscard]] double distanceToLine(const Vector<double>& a, const Vector<double>& b) const {
+        Vector<double> ab = b - a;
+        Vector<double> ac = *this - a;
+        return abs(ac % ab) / sqrt(ab.square_norm());
     }
 
     // Rotates Counterclockwise, works with negative angles
     [[nodiscard]] Vector rotate(double angle) const {
-        return ContinuousVector(x * cos(angle) + y * sin(angle), -x * sin(angle) + y * cos(angle));
-    } */
+        return Vector<double>(x * cos(angle) + y * sin(angle), -x * sin(angle) + y * cos(angle));
+    }
 };
 
 /* https://cp-algorithms.com/geometry/nearest_points.html
