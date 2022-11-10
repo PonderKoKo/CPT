@@ -1,9 +1,5 @@
-def solve():
-    a = input()
-    s = input()
-    print(int(a) + len(set(s)))
-    input()
-
-t = int(input())
-for i in range(t):
-    solve()
+for i in range(int(input())):
+    n, m = map(int, input().split())
+    for i in range(m):
+        input()
+    print("YES" if m < n else "NO")
