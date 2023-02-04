@@ -1,11 +1,12 @@
 #include "macros.h"
 
+// Venice Technique (Maintain Global „water level“ to support updateAll operation, always add it on insert and remove on output
+
 // Sadly Ranges is only available in C++20, using that with Algorithms library would be the cleanest.
 /* Assuming the predicate p: [lo, hi) -> bool is monotonic (false then true),
  * returns the index of the first element in the range [lo, hi) that satisfies p.
  * If no such element is found, returns hi. This can be imagined as stipulating that p(hi) is true. */
-template<typename num, typename Function>
-num binary_weapon(num lo, num hi, const Function& p) {
+num binary_weapon(num lo, num hi, const function<bool(num)>& p) {
     while (lo < hi) {
         num mid = (lo + hi) / 2;
         if (p(mid))
@@ -16,14 +17,40 @@ num binary_weapon(num lo, num hi, const Function& p) {
     return lo;
 }
 
-u32 count_bits(u64 n) {
-    u32 count = 0;
-    while (n) {
-        count += n & 1;
-        n >>= 1;
+seq next_larger(seq& a) {
+    seq next_larger(sz(a), -1);
+    stack<num> st;
+    st.push(0);
+    reps(i,1,sz(a)) {
+        while (!st.empty() && a[st.top()] < a[i])
+            next_larger[st.top()] = i, st.pop();
+        st.push(i);
     }
-    return count;
+    return next_larger;
 }
+
+void compress(seq& a) {
+    map<num,num> m;
+    for (const auto& x : a)
+        m[x] = 0;
+    num i = 0;
+    for (auto& [x, y] : m)
+        y = i++;
+    for (auto& x : a)
+        x = m[x];
+}
+
+struct RangeSum {
+    seq prefix;
+    explicit RangeSum(const seq& a) : prefix(a.size() + 1) {
+        rep(i, a.size())
+            prefix[i+1] = prefix[i] + a[i];
+    }
+    num query(num l, num r) {
+        assert(0 <= l && l <= r && r < prefix.size());
+        return prefix[r] - prefix[l];
+    }
+};
 
 /* Counts inversions using Merge Sort.
  * Complexity: O(n log n)

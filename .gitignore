@@ -2,6 +2,7 @@ source/example
 source/example.cpp
 source/input.txt
 cf
+unfinished
 # clion builds
 cmake-build-*
 

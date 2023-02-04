@@ -61,7 +61,7 @@ struct Vector {
         return other < *this;
     }
 
-    enum class angle {
+    enum class Angle {
         zero,
         acute,
         right,
@@ -74,36 +74,36 @@ struct Vector {
     };
 
     // Counterclockwise Angle
-    angle operator ^ (const Vector& other) const {
+    Angle operator ^ (const Vector& other) const {
         if (*this == null || other == null)
-            return angle::undefined;
+            return Angle::undefined;
         i64 dot = *this * other;
         i64 cross = *this % other;
         if (cross == 0) {
             if (dot > 0)
-                return angle::zero;
+                return Angle::zero;
             else /* dot < 0 ### = 0 is impossible */
-                return angle::straight;
+                return Angle::straight;
         } else if (cross > 0) {
             if (dot < 0)
-                return angle::obtuse;
+                return Angle::obtuse;
             else if (dot == 0)
-                return angle::right;
+                return Angle::right;
             else /* dot > 0 */
-                return angle::acute;
+                return Angle::acute;
         } else {
             if (dot < 0)
-                return angle::acute_reflex;
+                return Angle::acute_reflex;
             else if (dot == 0)
-                return angle::right_reflex;
+                return Angle::right_reflex;
             else /* dot > 0 */
-                return angle::obtuse_reflex;
+                return Angle::obtuse_reflex;
         }
         assert(0);
     }
 
-    friend bool angle_interval(angle lo, angle hi, angle a, bool lo_inclusive = true, bool hi_inclusive = false) {
-        if (lo == angle::undefined || hi == angle::undefined || a == angle::undefined)
+    friend bool angle_interval(Angle lo, Angle hi, Angle a, bool lo_inclusive = true, bool hi_inclusive = false) {
+        if (lo == Angle::undefined || hi == Angle::undefined || a == Angle::undefined)
             return false;
         if (lo <= hi) {
             if (lo_inclusive) {
@@ -212,7 +212,7 @@ coordinate closest_pair(u32 l, u32 r, vector<Vector<coordinate>> &points, vector
  */
 template<typename coordinate>
 void convex_hull(vector<Vector<coordinate>>& a, bool include_collinear = false) {
-using angle = typename Vector<coordinate>::angle;
+using Angle = typename Vector<coordinate>::Angle;
     if (a.size() == 1)
         return;
 
@@ -222,15 +222,15 @@ using angle = typename Vector<coordinate>::angle;
     up.push_back(p1);
     down.push_back(p1);
     for (u32 i = 1; i < a.size(); ++i) {
-        angle theta = (a[i] - p1) ^ (p2 - p1);
-        assert(theta != angle::undefined);
-        if (i == a.size() - 1 || angle_interval(angle::straight, angle::zero, theta, include_collinear, include_collinear)) {
-            while (up.size() >= 2 && angle_interval(angle::zero, angle::straight, (up[up.size() - 1] - up[up.size() - 2]) ^ (a[i] - up[up.size() - 2]), !include_collinear, !include_collinear))
+        Angle theta = (a[i] - p1) ^ (p2 - p1);
+        assert(theta != Angle::undefined);
+        if (i == a.size() - 1 || angle_interval(Angle::straight, Angle::zero, theta, include_collinear, include_collinear)) {
+            while (up.size() >= 2 && angle_interval(Angle::zero, Angle::straight, (up[up.size() - 1] - up[up.size() - 2]) ^ (a[i] - up[up.size() - 2]), !include_collinear, !include_collinear))
                 up.pop_back();
             up.push_back(a[i]);
         }
-        if (i == a.size() - 1 || angle_interval(angle::zero, angle::straight, theta, include_collinear, include_collinear)) {
-            while (down.size() >= 2 && angle_interval(angle::straight, angle::zero, (down[down.size() - 1] - down[down.size() - 2]) ^ (a[i] - down[down.size() - 2]), !include_collinear, !include_collinear))
+        if (i == a.size() - 1 || angle_interval(Angle::zero, Angle::straight, theta, include_collinear, include_collinear)) {
+            while (down.size() >= 2 && angle_interval(Angle::straight, Angle::zero, (down[down.size() - 1] - down[down.size() - 2]) ^ (a[i] - down[down.size() - 2]), !include_collinear, !include_collinear))
                 down.pop_back();
             down.push_back(a[i]);
         }

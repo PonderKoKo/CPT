@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 
-#define rep(a, b) for (u32 a = 0; a < (b); ++a)
+#define rep(a, b) for (num a = 0; a < (b); ++a)
 #define all(a) (a).begin(), (a).end()
 #define many int t; cin >> t; while (t--)
 #define yesno cout << (solve() ? "YES" : "NO") << '\n'
@@ -9,11 +9,13 @@
 
 using namespace std;
 
-using i32 = long int;
-using u32 = unsigned long int;
-using i64 = long long int;
-using u64 = unsigned long long int;
-using Graph = vector<vector<u32>>;
+using num = long long int;
+using seq = vector<num>;
+using par = pair<num,num>;
+using Graph = vector<vector<num>>;
+using WGraph = vector<vector<par>>;
+template<typename T, typename U> istream& operator>>(istream& is, pair<T,U>& p) { return is >> p.first >> p.second; }
+template<typename T> istream& operator>>(istream& is, vector<T>& v) { for (auto& e : v) is >> e; return is; }
 
 void solve() {
 	

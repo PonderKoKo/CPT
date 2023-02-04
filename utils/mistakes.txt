@@ -1,7 +1,9 @@
+When solving:
+- Read the problem yourself.
+
 Debugging:
-- Read the entire input for each test case.
-- Check unsigned differences
+- cin the entire input for each test case.
 
 Before Submission
-- Check if variables can hold all the required values.
 - When precomputing arrays, use more than you need to.
+- Check if there are large samples
