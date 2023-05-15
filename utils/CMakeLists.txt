@@ -1,7 +1,0 @@
-add_executable(modular modular.cpp macros.h)
-add_executable(strings strings.cpp macros.h)
-add_executable(traversal traversal.cpp macros.h)
-add_executable(geometry geometry.cpp macros.h)
-add_executable(algos algos.cpp macros.h treap.cpp)
-add_executable(trees trees.cpp macros.h)
-add_executable(primes primes.cpp macros.h)

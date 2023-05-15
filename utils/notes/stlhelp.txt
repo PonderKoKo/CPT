@@ -1,0 +1,3 @@
+transform_reduce( all, init, binary, unary )
+Append b to a: a.insert(end(a), all(b))
+partition_point finds iterator to first false

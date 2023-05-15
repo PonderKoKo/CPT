@@ -1,9 +1,0 @@
-When solving:
-- Read the problem yourself.
-
-Debugging:
-- cin the entire input for each test case.
-
-Before Submission
-- When precomputing arrays, use more than you need to.
-- Check if there are large samples

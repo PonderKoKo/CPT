@@ -21,16 +21,15 @@ template<typename T, typename U> istream& operator>>(istream& is, pair<T,U>& p) 
 template<typename T> ostream& operator<<(ostream& os, const vector<T>& v) { for (auto& e : v) os << e << ' '; return os; }
 template<typename T> istream& operator>>(istream& is, vector<T>& v) { for (auto& e : v) is >> e; return is; }
 template<typename T> num sign(T x) { return (T(0) < x) - (x < T(0)); }
-void read(Graph& adj, num m = -1, bool d = false) { rep(i, m != -1 ? m : ssize(adj) - 1) { num u, v; cin >> u >> v; --u, --v; adj[u].push_back(v); if (!d) adj[v].push_back(u); }}
 constexpr num operator ""_e(unsigned long long x) { num ans = 1; rep(i, static_cast<num>(x)) ans *= 10; return ans; }
 
 void solve() {
-	
+
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    call;
-    return 0;
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	call;
+	return 0;
 }

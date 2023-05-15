@@ -51,8 +51,8 @@ void treeDFS(num node, const Graph& children) {
  * Complexity: m log n
  * https://cp-algorithms.com/graph/dijkstra_sparse.html
  */
-vector<num> dijkstra(num source, const vector<vector<par>>& adj) {
-    vector<num> distance(adj.size(), numeric_limits<num>::max());
+vector<num> dijkstra(num source, const Table<par>& adj) {
+    vector<num> distance(size(adj), numeric_limits<num>::max());
     distance[source] = 0;
     priority_queue<pair<num,num>, vector<pair<num,num>>, greater<>> q;
     q.emplace(0, source);

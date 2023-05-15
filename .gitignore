@@ -1,8 +1,10 @@
 source/example
 source/example.cpp
 source/input.txt
-cf
+source/solution.py
+source/testcases.py
 unfinished
+kactl.pdf
 # clion builds
 cmake-build-*
 

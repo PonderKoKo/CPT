@@ -1,0 +1,15 @@
+When solving:
+- Read the problem yourself.
+
+Debugging:
+- cin the entire input for each test case.
+- overflows
+- Don't declare two references in the same line
+
+Before Submission
+- When precomputing arrays, use more than you need to.
+- Check if there are large samples
+- Minimal Testcase
+
+Specific
+- map<num,seq> is extremely,
