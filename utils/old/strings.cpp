@@ -1,37 +1,4 @@
-#include "macros.h"
-#include "modular.cpp"
-// Probably broken, please fix me.
-class MultisetHash {
-    using mod = modular<4'611'686'018'427'387'847>;
-    static constexpr mod base{131};
-    mod hash{1};
-    num length;
-public:
-    MultisetHash() : length{0} {}
-    MultisetHash(num x) : MultisetHash{seq{x}} {}
-    template<typename T>
-    MultisetHash(const T& s) : length{ssize(s)} {
-        for (const auto& x : s)
-            hash *= base + x;
-    }
-
-    MultisetHash& operator+=(const MultisetHash& other) {
-        hash *= other.hash;
-        length += other.length;
-        return *this;
-    }
-
-    MultisetHash& operator-=(const MultisetHash& other) {
-        hash /= other.hash;
-        length -= other.length;
-        return *this;
-    }
-
-    friend MultisetHash operator+(MultisetHash l, const MultisetHash& r) { return l += r; }
-    friend MultisetHash operator-(MultisetHash l, const MultisetHash& r) { return l -= r; }
-
-    auto operator<=>(const MultisetHash&) const = default;
-};
+#include "../macros.h"
 
 pair<seq,Graph> cyclic_shifts(const string& s) {
     num n = ssize(s), logn = 64 - countl_zero(static_cast<unsigned long long>(n));

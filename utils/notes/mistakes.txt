@@ -1,15 +1,16 @@
 When solving:
 - Read the problem yourself.
+- Push implementation problems to the end.
+- Write clean code.
 
 Debugging:
 - cin the entire input for each test case.
 - overflows
 - Don't declare two references in the same line
+- Print, print, print.
+- Computer time is at least 2x more valuable than your own time.
 
 Before Submission
 - When precomputing arrays, use more than you need to.
 - Check if there are large samples
 - Minimal Testcase
-
-Specific
-- map<num,seq> is extremely,

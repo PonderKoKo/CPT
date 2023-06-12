@@ -25,9 +25,9 @@ seq primes(num n) {
 
 // Find x, y such that ax + by = gcd(a, b)
 par euclid(num a, num b) {
-    if (!a) return make_pair(0, 1);
+    if (!a) return par(0, 1);
     auto [x, y] = euclid(b % a, a);
-    return make_pair(y - b / a * x, x);
+    return par(y - b / a * x, x);
 }
 
 // Find x such that x = a (mod m) and x = b (mod n)

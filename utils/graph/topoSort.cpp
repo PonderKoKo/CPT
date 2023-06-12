@@ -16,7 +16,7 @@ seq topoSort(const Graph& adj) {
     for (num node : topo) {
         assert(node != -1);
         for (num next : adj[node])
-            if (--in[next])
+            if (!--in[next])
                 topo[i++] = next;
     }
     return topo;

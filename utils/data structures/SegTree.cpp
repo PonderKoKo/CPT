@@ -14,7 +14,7 @@ struct SegTree {
 		for (s[pos += n] = val; pos /= 2;)
 			s[pos] = f(s[pos * 2], s[pos * 2 + 1]);
 	}
-	T query(num l, num r) {
+	T query(num l, num r) const {
 		T ra = unit, rb = unit;
 		for (l += n, r += n; l < r; l /= 2, r /= 2) {
 			if (l % 2) ra = f(ra, s[l++]);
@@ -29,8 +29,12 @@ struct SegTree {
 		for (num i = n - 1; i > 0; --i)
 			s[i] = f(s[i * 2], s[i * 2 + 1]);
 	}
+	T operator[](num i) const { // TODO Untested
+		return s[n + i];
+	}
+
 	// Assuming p monotonic: Returns first r such that p(query(l, r)) is true or n+1 otherwise
-	num search(num l, const function<bool(T)> p) {
+	num search(num l, const function<bool(T)> p) const {
 		seq splits, splits_back;
 		num r = n;
 		for (l += n, r += n; l < r; l /= 2, r /= 2) {

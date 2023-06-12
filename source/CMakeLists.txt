@@ -9,6 +9,7 @@ add_compile_options(
         # debug mode of STL
         -D_GLIBCXX_DEBUG # set debug macro for libstdc++ (gcc std lib)
         -D_LIBCPP_DEBUG # set debug macro for libc++ (clang std lib)
+        -D DEBUG
 )
 add_link_options(
         #-fsanitize=address,undefined
@@ -17,7 +18,7 @@ add_link_options(
 endif()
 if (CMAKE_BUILD_TYPE MATCHES Release)
     add_compile_options(
-            -O3
+            -O2
     )
 endif()
 add_executable(example example.cpp)
