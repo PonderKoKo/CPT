@@ -1,22 +1,5 @@
 #include "macros.h"
 
-void bfs(num source, const Graph& adj, num n) {
-    queue<num> q;
-    q.push(source);
-    vector<num> dist(n, -1);
-    dist[source] = 0;
-    while (!q.empty()) {
-        num u = q.front();
-        q.pop();
-        for (num v : adj[u]) {
-            if (dist[v] == -1) {
-                dist[v] = dist[u] + 1;
-                q.push(v);
-            }
-        }
-    }
-}
-
 /* Dinic's algorithm for Max Flow
  * Complexity: O(|V|^2 * |E|), but O(sqrt(V) * E) for Unit Graphs!
  */
@@ -121,33 +104,6 @@ void kosaraju(Graph& adj) {
     reverse(all(order));
 }
  */
-
-num bridgeDFS(num v, num d, seq& lvl, const Graph& adj, Graph& comps, seq& st) {
-    num st_pos = size(st);
-    st.push_back(v);
-    num up = 0;
-    lvl[v] = d;
-    for (auto v2 : adj[v]) {
-        if (lvl[v2] == -1) // tree edge
-            up += bridgeDFS(v2, d+1, lvl, adj, comps, st);
-        if (lvl[v2] < d) up++; // up
-        if (lvl[v2] > d) up--; // down
-    }
-    if (d==0 || up==1) { // exiting comp
-        comps.emplace_back(
-                begin(st)+st_pos, end(st));
-        st.resize(st_pos);
-    }
-    return up;
-}
-
-Graph two_edge_comps(const Graph& adj) {
-    Graph comps;
-    seq st;
-    seq lvl(adj.size(), -1);
-    bridgeDFS(0, 0, lvl, adj, comps, st);
-    return comps;
-}
 
 void cutDFS(num v, num p, num& timer, bits& visited, seq& tin, seq& low, Graph& adj, set<num>& cut_vertices, vector<set<num>>& blocks, seq& node_stack) {
     visited[v] = true;

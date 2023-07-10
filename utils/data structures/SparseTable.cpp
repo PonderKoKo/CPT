@@ -26,8 +26,8 @@ struct CmpSparseTable {
 #undef cmp
 };
 
+template<typename T>
 struct OpSparseTable {
-	using T = num;
 #define op(x, y) min(x, y)
 
 	Table<T> m;

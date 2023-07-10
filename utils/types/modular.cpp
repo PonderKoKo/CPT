@@ -84,6 +84,8 @@ struct modular {
 	}
 
 	static modular binom(const num& n, const num& k) {
+        if (k < 0 || k > n)
+            return 0;
 		return factorial(n) / factorial(k) / factorial(n - k);
 	}
 
