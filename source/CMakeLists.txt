@@ -7,8 +7,9 @@ add_compile_options(
         -fno-omit-frame-pointer
         -fno-sanitize-recover=all
         # debug mode of STL
-        -D_GLIBCXX_DEBUG # set debug macro for libstdc++ (gcc std lib)
-        -D_LIBCPP_DEBUG # set debug macro for libc++ (clang std lib)
+        -g
+        # -D_GLIBCXX_DEBUG # set debug macro for libstdc++ (gcc std lib)
+        # -D_LIBCPP_DEBUG # set debug macro for libc++ (clang std lib)
         -D DEBUG
 )
 add_link_options(

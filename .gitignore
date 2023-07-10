@@ -3,8 +3,9 @@ source/example.cpp
 source/input.txt
 source/solution.py
 source/testcases.py
+source/bits
 unfinished
-kactl.pdf
+utils/hactl.pdf
 # clion builds
 cmake-build-*
 

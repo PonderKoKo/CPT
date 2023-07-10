@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include "bits/stdc++.h"
 #ifndef DEBUG
 #pragma GCC optimize("Ofast,unroll-loops")
 #pragma GCC target("avx2,popcnt,lzcnt,abm,bmi,bmi2,fma,tune=native")
@@ -22,11 +22,6 @@ template<typename T> ostream& operator<<(ostream& os, const vector<T>& v) { for 
 template<typename T> istream& operator>>(istream& is, vector<T>& v) { for (auto& e : v) is >> e; return is; }
 template<typename T> num sign(T x) { return (T(0) < x) - (x < T(0)); }
 constexpr num operator ""_e(unsigned long long x) { num ans = 1; rep(i, static_cast<num>(x)) ans *= 10; return ans; }
-template<typename T> T pop(stack<T>& st) { T x{std::move(st.top())}; st.pop(); return x; }
-template<typename T, typename U, typename V> T pop(priority_queue<T,U,V>& pq) { T x{std::move(pq.top())}; pq.pop(); return x; }
-template<typename T> T pop(queue<T>& q) { T x{std::move(q.front())}; q.pop(); return x; }
-template<typename T> T pop(vector<T>& v) { T x{std::move(v.back())}; v.pop_back(); return x; }
-num binary(num lo, num hi, const function<bool(num)> p) { return *ranges::partition_point(ranges::iota_view(lo, hi), p); } // First false
 
 void solve() {
 
