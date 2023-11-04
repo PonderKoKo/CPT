@@ -1,11 +1,11 @@
 #include "../macros.h"
 
 struct UnionFind {
-	vector<int> parent;
-	UnionFind(int n) : parent(n, -1) {}
+	vector<int> p;
+	UnionFind(int n) : p(n, -1) {}
 
 	int find(int x) {
-		return parent[x] < 0 ? x : parent[x] = find(parent[x]);
+		return p[x] < 0 ? x : p[x] = find(p[x]);
 	}
 
 	bool join(int x, int y) {
@@ -13,10 +13,10 @@ struct UnionFind {
 		y = find(y);
 		if (x == y)
 			return false;
-		if (parent[x] > parent[y])
+		if (p[x] > p[y])
 			swap(x, y);
-		parent[x] += parent[y];
-		parent[y] = x;
+		p[x] += p[y];
+		p[y] = x;
 		return true;
 	}
 };

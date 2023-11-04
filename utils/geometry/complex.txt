@@ -19,7 +19,7 @@ Rotation about the origin: a * polar(1.0, theta)
 Rotation about pivot p: (a-p) * polar(1.0, theta) + p
 
 UPD: added more useful functions
-Angle ABC: abs(remainder(arg(a-b) - arg(c-b), 2.0 * M_PI))
+Angle ABC: remainder(arg(a-b) - arg(c-b), 2.0 * M_PI)
 
 remainder normalizes the angle to be between [-PI, PI]. Thus, we can get the positive non-reflex angle by taking its abs value.
 Project p onto vector v: v * dot(p, v) / norm(v);

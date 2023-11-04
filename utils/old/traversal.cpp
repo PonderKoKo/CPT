@@ -1,4 +1,4 @@
-#include "macros.h"
+#include "../macros.h"
 
 /* Dinic's algorithm for Max Flow
  * Complexity: O(|V|^2 * |E|), but O(sqrt(V) * E) for Unit Graphs!
@@ -235,78 +235,6 @@ struct PushRelabel {
     bool leftOfMinCut(int a) { return H[a] >= sz(g); }
 };
 
-#include <bits/extc++.h>
-const ll INF = numeric_limits<ll>::max() / 4;
-typedef vector<ll> VL;
-struct MCMF {
-    int N;
-    vector<vi> ed, red;
-    vector<VL> cap, flow, cost;
-    vi seen;
-    VL dist, pi;
-    vector<pair<int,int>> par;
-    MCMF(int N) :
-            N(N), ed(N), red(N), cap(N, VL(N)), flow(cap), cost(cap),
-            seen(N), dist(N), pi(N), par(N) {}
-    void addEdge(int from, int to, ll cap, ll cost) {
-        this->cap[from][to] = cap;
-        this->cost[from][to] = cost;
-        ed[from].push_back(to);
-        red[to].push_back(from);
-    }
-    void path(int s) {
-        fill(all(seen), 0);
-        fill(all(dist), INF);
-        dist[s] = 0; ll di;
-        __gnu_pbds::priority_queue<pair<ll, int>> q;
-        vector<decltype(q)::point_iterator> its(N);
-        q.push({0, s});
-        auto relax = [&](int i, ll cap, ll cost, int dir) {
-            ll val = di - pi[i] + cost;
-            if (cap && val < dist[i]) {
-                dist[i] = val;
-                par[i] = {s, dir};
-                if (its[i] == q.end()) its[i] = q.push({-dist[i], i});
-                else q.modify(its[i], {-dist[i], i});
-            }
-        };
-        while (!q.empty()) {
-            s = q.top().second; q.pop();
-            seen[s] = 1; di = dist[s] + pi[s];
-            for (int i : ed[s]) if (!seen[i])
-                    relax(i, cap[s][i] - flow[s][i], cost[s][i], 1);
-            for (int i : red[s]) if (!seen[i])
-                    relax(i, flow[i][s], -cost[i][s], 0);
-        }
-        rep(i,N) pi[i] = min(pi[i] + dist[i], INF);
-    }
-    pair<ll, ll> maxflow(int s, int t) {
-        ll totflow = 0, totcost = 0;
-        while (path(s), seen[t]) {
-            ll fl = INF;
-            for (int p,r,x = t; tie(p,r) = par[x], x != s; x = p)
-                fl = min(fl, r ? cap[p][x] - flow[p][x] : flow[x][p]);
-            totflow += fl;
-            for (int p,r,x = t; tie(p,r) = par[x], x != s; x = p)
-                if (r) flow[p][x] += fl;
-                else flow[x][p] -= fl;
-        }
-        rep(i,N) rep(j,N) totcost += cost[i][j] * flow[i][j];
-        return {totflow, totcost};
-    }
-// I f some costs can be negative , c a l l t h i s before maxflow :
-    void setpi(int s) { // ( otherwise , leave t h i s out)
-        fill(all(pi), INF); pi[s] = 0;
-        int it = N, ch = 1; ll v;
-        while (ch-- && it--)
-            rep(i,N) if (pi[i] != INF)
-                for (int to : ed[i]) if (cap[i][to])
-                    if ((v = pi[i] + cost[i][to]) < pi[to])
-                        pi[to] = v, ch = 1;
-        assert(it >= 0); // negative cost cycle
-    }
-};
-
 bool dfs(int a, int L, vector<vi>& g, vi& btoa, vi& A, vi& B) {
     if (A[a] != L) return 0;
     A[a] = -1;
@@ -348,54 +276,3 @@ int hopcroftKarp(vector<vi>& g, vi& btoa) {
         res += dfs(a, 0, g, btoa, A, B);
     }
 }
-
-struct TwoSat {
-    int N;
-    vector<vi> gr;
-    vi values; // 0 = false , 1 = true
-    TwoSat(int n = 0) : N(n), gr(2*n) {}
-    int addVar() { // ( optional )
-        gr.emplace_back();
-        gr.emplace_back();
-        return N++;
-    }
-    void either(int f, int j) {
-        f = max(2*f, -1-2*f);
-        j = max(2*j, -1-2*j);
-        gr[f].push_back(j^1);
-        gr[j].push_back(f^1);
-    }
-    void setValue(int x) { either(x, x); }
-    void atMostOne(const vi& li) { // ( optional )
-        if (sz(li) <= 1) return;
-        int cur = ~li[0];
-        for (int i = 2; i < sz(li); i++) {
-            int next = addVar();
-            either(cur, ~li[i]);
-            either(cur, next);
-            either(~li[i], next);
-            cur = ~next;
-        }
-        either(cur, ~li[1]);
-    }
-    vi val, comp, z; int time = 0;
-    int dfs(int i) {
-        int low = val[i] = ++time, x; z.push_back(i);
-        for(int e : gr[i]) if (!comp[e])
-                low = min(low, val[e] ?: dfs(e));
-        if (low == val[i]) do {
-                x = z.back(); z.pop_back();
-                comp[x] = low;
-                if (values[x>>1] == -1)
-                    values[x>>1] = x&1;
-            } while (x != i);
-        return val[i] = low;
-    }
-    bool solve() {
-        values.assign(N, -1);
-        val.assign(2*N, 0); comp = val;
-        rep(i,2*N) if (!comp[i]) dfs(i);
-        rep(i,N) if (comp[2*i] == comp[2*i+1]) return 0;
-        return 1;
-    }
-};

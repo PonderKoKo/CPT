@@ -41,3 +41,63 @@ struct Dinic {
     }
     bool leftOfMinCut(int a) { return lvl[a] != 0; }
 };
+
+
+/* WIP
+ * template<typename CAP>
+struct Dinic {
+	struct Edge {
+		int from, to;
+		CAP cap, flow;
+	};
+	vector<Edge> e;
+	vector<int> ptr, lvl;
+	vector<vector<int>> adj;
+	int t;
+	explicit Dinic(int n) : adj(n) {}
+
+	void addEdge(const int& from, const int& to, const CAP& cap) {
+		if (from == to || !cap)
+			return;
+		adj[from].push_back(size(e));
+		adj[to].push_back(size(e));
+#ifndef __clang__
+		e.emplace_back(from, to, cap, 0);
+#else
+		e.push_back({from,to,cap,0});
+#endif
+	}
+#define v (e[i].to != u ? e[i].to : e[i].from)
+#define rem (e[i].to != u ? e[i].flow : e[i].cap - e[i].flow)
+	CAP dfs(const int& u, const CAP& f) {
+		if (u == t || !f)
+			return f;
+		for (int& i = ptr[u]; i < ssize(adj[u]); i++) // One among many problems is here: we should use adj[i] for the macro
+			if (int c; lvl[u] + 1 == lvl[v] && (c = dfs(v, min(f, rem))))
+				return e[i].flow += u == e[i].to ? c : -c, c;
+		return 0;
+	}
+
+	num solve(const int& s, const int& tt) {
+		t = tt;
+		assert(s != t);
+		num flow = 0;
+		for (CAP l = numeric_limits<CAP>::max(); l; lvl[t] || (l /= 2)) {
+			lvl = ptr = vector<int>(size(adj));
+			lvl[s] = 1;
+			for (queue<int> q{{s}}; !empty(q) && !lvl[t]; q.pop()) {
+				const int& u = q.front();
+				for (int i : adj[q.front()])
+					if (!lvl[v] && rem >= l)
+						q.push(v), lvl[v] = lvl[u] + 1;
+			}
+			while (auto f = dfs(s, numeric_limits<CAP>::max()))
+				flow += f;
+		}
+		return flow;
+	}
+#undef v
+#undef rem
+	bool leftOfMinCut(const int& u) { return lvl[u]; }
+};
+ */

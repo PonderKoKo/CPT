@@ -27,3 +27,28 @@ void centroidDecomposition(num node, num parent, const Graph& adj, vector<bool>&
         if (!visited[next])
             centroidDecomposition(next, node, adj, visited, sizes);
 }
+
+// UNTESTED
+void centroids(const Table<int>& adj) {
+    vector<int> subtree(size(adj));
+    function<void(int,int,int)> findSubtree = [&] (int u, int p, int cp) {
+        subtree[u] = 1;
+        for (int v : adj[u])
+            if (v != p && v != cp)
+                subtree[u] += (findSubtree(v, u, cp), subtree[v]);
+    };
+    function<int(int,int,int,int)> findCentroid = [&] (int u, int p, int cp, int thresh) {
+        for (int v : adj[u])
+            if (v != p && v != cp && subtree[v] > thresh)
+                return findCentroid(v, u, cp, thresh);
+        return u;
+    };
+    function<void(int,int)> decomp = [&] (int u, int p) {
+        findSubtree(u, -1, p);
+        int c = findCentroid(u, -1, p, subtree[u]);
+        for (int v : adj[u])
+            if (v != p)
+                decomp(v, u);
+    };
+    decomp(0, -1);
+}

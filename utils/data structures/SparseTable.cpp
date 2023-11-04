@@ -1,29 +1,25 @@
 #include "../macros.h"
 
+template<typename T, typename cmp=less_equal<>>
 struct CmpSparseTable {
-	using T = num;
-#define cmp <=
-
 	const vector<T> a;
-	Graph m;
+	Table<int> m;
 
-	CmpSparseTable(const vector<T>& v) : a(v), m(bit_width(size(a)), seq(size(a))) {
-		iota(all(m[0]), 0ll);
+	CmpSparseTable(const vector<T>& v) : a(v), m(bit_width(size(a)), vector<int>(size(a))) {
+		iota(all(m[0]), 0);
 		rep(l, ssize(m) - 1)
-			for (num i = 0; i + (2 << l) <= ssize(a); i++)
-				m[l+1][i] = a[m[l][i]] cmp a[m[l][i + (1 << l)]] ? m[l][i] : m[l][i + (1 << l)];
+			for (int i = 0; i + (2 << l) <= ssize(a); i++)
+				m[l+1][i] = cmp{}(a[m[l][i]], a[m[l][i + (1 << l)]]) ? m[l][i] : m[l][i + (1 << l)];
 	}
 
-	num argquery(num l, num r) const {
+	num argquery(int l, int r) const {
 		auto t = bit_width(unsigned(r - l)) - 1;
-		return a[m[t][l]] cmp a[m[t][r - (1 << t)]] ? m[t][l] : m[t][r - (1 << t)];
+		return cmp{}(a[m[t][l]], a[m[t][r - (1 << t)]]) ? m[t][l] : m[t][r - (1 << t)];
 	}
 
-	T query(num l, num r) const {
+	T query(int l, int r) const {
 		return a[argquery(l, r)];
 	}
-
-#undef cmp
 };
 
 template<typename T>
@@ -39,12 +35,12 @@ struct OpSparseTable {
 				m[l+1][i] = op(m[l][i], m[l][i + (1 << l)]);
 	}
 
-	num query(num l, num r) const {
+	T query(int l, int r) const {
 		auto t = bit_width(unsigned(r - l)) - 1;
 		return op(m[t][l], m[t][r - (1 << t)]);
 	}
 
-#undef cmp
+#undef op
 };
 
 /* Benchmarking

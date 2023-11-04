@@ -31,7 +31,7 @@ struct modular {
 		if constexpr(m <= 1ll << 31)
 			return a *= other.a, a %= m, *this;
 		else
-			return a = num(__int128(a) * other.a % m), *this;
+			return a = __int128(a) * other.a % m, *this;
 	}
 
 	modular operator ! () const {
@@ -60,8 +60,8 @@ struct modular {
 
 	modular& operator ++ () { return *this += 1; }
 	modular& operator -- () { return *this -= 1; }
-	const modular operator ++ (int) { const modular result (*this); ++*this; return result; }
-	const modular operator -- (int) { const modular result (*this); --*this; return result; }
+	modular operator ++ (int) { const modular result (*this); ++*this; return result; }
+	modular operator -- (int) { const modular result (*this); --*this; return result; }
 	modular operator + () const { return *this; }
 	modular operator - () const { return modular(-a); }
 	modular& operator /= (const modular& other) { return *this *= !other; }
@@ -74,36 +74,41 @@ struct modular {
 	friend ostream& operator << (ostream& stream, const modular& mod) { return stream << mod.a; }
 
 	// Combinatorics
-	static vector<modular> factorials;
 
-	static modular factorial(const num& n) {
-		factorials.reserve(n);
-		for (static num i = 1; i <= n; i++)
-			factorials.push_back(factorials[i-1] * i);
+	static modular factorial(int n) {
+		static vector<modular> factorials{1};
+		for (static int i = 1; i <= n; i++)
+			factorials.push_back(factorials.back() * i);
 		return factorials[n];
 	}
 
-	static modular binom(const num& n, const num& k) {
-        if (k < 0 || k > n)
-            return 0;
-		return factorial(n) / factorial(k) / factorial(n - k);
+	static modular binom(int n, int k) {
+		return k < 0 || k > n ? 0 : factorial(n) / (factorial(k) * factorial(n - k));
 	}
 
 	static vector<modular> inverses(const vector<modular>& x) {
 		modular denominator = !reduce(all(x), modular(1), multiplies<>());
-		vector<modular> prefix(size(x)), suffix(size(x)), ans(size(x));
-		exclusive_scan(all(x), begin(prefix), modular(1), multiplies<>());
-		exclusive_scan(rbegin(x), rend(x), rbegin(suffix), modular(1), multiplies<>());
-		transform(all(prefix), begin(suffix), begin(ans), multiplies<>());
-		transform(all(ans), begin(ans), [&] (modular z) { return z * denominator; });
-		return ans;
+		vector<modular> pre(size(x)), suf(pre);
+		exclusive_scan(all(x), begin(pre), modular(1), multiplies<>());
+		exclusive_scan(rbegin(x), rend(x), rbegin(suf), modular(1), multiplies<>());
+		transform(all(pre), begin(suf), begin(pre), multiplies<>());
+		transform(all(pre), begin(pre), [&] (const modular& z) { return z * denominator; });
+		return pre;
 	}
 
 	// Polynomial Hashes
-	static const modular base;
-	modular(const seq& s) : a{accumulate(rbegin(s), rend(s), modular(0), [](modular acc, const auto& x) { return acc * base + x; })} {}
-	modular(num i, num x) : a{x * (base ^ i)} {}
-	modular& operator>>= (num i) { return *this *= base ^ i; }
+	static modular base() {
+		static mt19937 rng(static_cast<unsigned>(chrono::steady_clock::now().time_since_epoch().count()));
+		static modular b{uniform_int_distribution<num>(7_e, 9_e)(rng)};
+		return b;
+	}
+	static modular hash(const auto& s) {
+		return accumulate(rbegin(s), rend(s), modular(0), [] (modular acc, const auto& x) { return acc * base() + x; });
+	}
+	static modular place(num i, num x) {
+		return modular(x) >> i;
+	}
+	modular& operator>>= (num i) { return *this *= base() ^ i; }
 	modular& operator<<= (num i) { return *this >>= -i; }
 	friend modular operator>> (modular self, num i) { return self >>= i; }
 	friend modular operator<< (modular self, num i) { return self <<= i; }
@@ -111,9 +116,7 @@ struct modular {
 
 #undef addIfNegative
 };
-template<num m> vector<modular<m>> modular<m>::factorials = {1};
-template<num m> modular<m> const modular<m>::base{uniform_int_distribution<num>(3_e, 9_e)(rng)};
+using mod = modular<9_e + 7>;
 
-// using mod = modular<9_e + 7>;
 // using mod = modular<998'244'353>;
 // using hashmod = modular<4'611'686'018'427'387'847ll>;

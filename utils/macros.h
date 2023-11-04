@@ -1,6 +1,6 @@
 #pragma once
 
-#include <bits/stdc++.h>
+#include "../source/bits/stdc++.h"
 
 #define rep(a, b) for (num a = 0; a < (b); ++a)
 #define all(a) (a).begin(), (a).end()

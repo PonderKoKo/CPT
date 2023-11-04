@@ -4,16 +4,16 @@
  * Edges only go from Left to Right
  * Replace Assertion to handle Cycles
  */
-seq topoSort(const Graph& adj) {
-    num n = ssize(adj), i = 0;
-    seq in(n), topo(n, -1);
-    for (const seq& row : adj)
-        for (num node : row)
+vector<int> topoSort(const Table<int>& adj) {
+    int n = ssize(adj), i = 0;
+    vector<int> in(n), topo(n, -1);
+    for (const auto& row : adj)
+        for (const auto& node : row)
             in[node]++;
     rep(j, n)
         if (!in[j])
             topo[i++] = j;
-    for (num node : topo) {
+    for (const auto& node : topo) {
         assert(node != -1);
         for (num next : adj[node])
             if (!--in[next])

@@ -1,76 +1,106 @@
 #include "../macros.h"
 
+#ifdef PBDS
 #include <bits/extc++.h>
+#endif
 struct CostFlow {
-    static constexpr num inf = numeric_limits<num>::max() / 4;
-    struct Edge {
-        int from, to;
-        num cap, flow, cost;
-    };
-    vector<Edge> e;
-    seq pot;
-    Table<int> adj;
-    vector<int> prev;
-    explicit CostFlow(int n) : pot(n), adj(n), prev(n) {}
-    void addEdge(int from, int to, num cap, num cost) {
-        if (from == to || cap <= 0)
-            return;
-        adj[from].push_back(size(e));
-        adj[to].push_back(size(e));
-        e.emplace_back(from, to, cap, 0, cost);
-    }
-    bool path(int s, int t) {
-        seq dist(size(adj), inf);
-        dist[s] = 0;
-        __gnu_pbds::priority_queue<pair<num,int>,greater<>> pq;
-        vector<decltype(pq)::point_iterator> its(size(adj));
-        for (pq.push({0, s}); !empty(pq);) {
-            auto [d, u] = pq.top();
-            pq.pop();
-            d += pot[u];
-            for (int i : adj[u]) {
-                auto [from, v, cap, flow, cost] = e[i];
-                cap -= flow;
-                if (u == v)
-                    cap = flow, v = from, cost *= -1;
-                num dv = d - pot[v] + cost;
-                if (!cap || dv >= dist[v])
-                    continue;
-                dist[v] = dv, prev[v] = i;
-                if (its[v] == end(pq))
-                    its[v] = pq.push({dv, v});
-                else
-                    pq.modify(its[v], {dv, v});
-            }
-        }
-        rep(i, ssize(adj))
-            pot[i] = min(inf, pot[i] + dist[i]);
-        return dist[t] != inf;
-    }
+	static constexpr num inf = numeric_limits<num>::max() / 4;
+	struct Edge {
+		int from, to;
+		num cap, flow, cost;
+	};
+	vector<Edge> e;
+	seq pot;
+	Table<int> adj;
+	vector<int> prev;
+	explicit CostFlow(int n) : pot(n), adj(n), prev(n) {}
+	void addEdge(int from, int to, num cap, num cost) {
+		if (from == to || cap <= 0)
+			return;
+		adj[from].push_back(size(e));
+		adj[to].push_back(size(e));
+#ifndef __clang__
+		e.emplace_back(from, to, cap, 0ll, cost);
+#else
+		e.push_back({from, to, cap, 0ll, cost}); // Clang doesn't support the above yet.
+#endif
+	}
+	bool path(int s, int t) {
+		seq dist(size(adj), inf);
+		dist[s] = 0;
+#ifdef PBDS
+		__gnu_pbds::priority_queue<pair<num,int>,greater<>> pq;
+		vector<decltype(pq)::point_iterator> its(size(adj));
+#else
+		priority_queue<pair<num,int>,vector<pair<num,int>>,greater<>> pq;
+#endif
+		for (pq.push({0, s}); !empty(pq);) {
+			auto [d, u] = pq.top();
+			pq.pop();
+#ifndef PBDS
+			if (dist[u] != d)
+				continue;
+#endif
+			d += pot[u];
+			for (int i : adj[u]) {
+				auto [from, v, cap, flow, cost] = e[i];
+				cap -= flow;
+				if (u == v)
+					cap = flow, v = from, cost *= -1;
+				num dv = d - pot[v] + cost;
+				if (!cap || dv >= dist[v])
+					continue;
+				dist[v] = dv, prev[v] = i;
+#ifdef PBDS
+				if (its[v] == end(pq))
+					its[v] = pq.push({dv, v});
+				else
+					pq.modify(its[v], {dv, v});
+#else
+				pq.emplace(dv, v);
+#endif
+			}
+		}
+		rep(i, ssize(adj))
+			pot[i] = min(inf, pot[i] + dist[i]);
+		return dist[t] != inf;
+	}
 
-    par solve(int s, int t, num flow_limit = inf, num cost_limit = inf) {
-        num flow{0}, cost{0};
-        while (path(s, t)) {
+	par solve(int s, int t, num flow_limit = inf, num cost_limit = inf) {
+		num flow{0}, cost{0};
+		while (path(s, t)) {
 #define BACKTRACE for (int x{t}, i, r; i = prev[x], r = e[i].to != x, x != s; x = r ? e[i].to : e[i].from)
-            num f{flow_limit - flow}, c{0};
-            BACKTRACE
-                f = min(f, r ? e[i].flow : e[i].cap - e[i].flow), c += (r ? -1 : 1) * e[i].cost;
-            if (c > 0)
-                f = min(f, (cost_limit - cost) / c);
-            flow += f;
-            cost += f * c;
-            BACKTRACE
-                e[i].flow += r ? -f : f;
-            if (flow == flow_limit || cost + c > cost_limit)
-                break;
-        }
-        return {flow, cost};
-    }
+			num f{flow_limit - flow}, c{0};
+			BACKTRACE
+				f = min(f, r ? e[i].flow : e[i].cap - e[i].flow), c += (r ? -1 : 1) * e[i].cost;
+			if (c > 0)
+				f = min(f, (cost_limit - cost) / c);
+			flow += f;
+			cost += f * c;
+			BACKTRACE
+				e[i].flow += r ? -f : f;
+			if (flow == flow_limit || cost + c > cost_limit)
+				break;
+#undef BACKTRACE
+		}
+		return {flow, cost};
+	}
 
-    // TODO Set Potential for negative costs
+	void setPotential(int s) {
+		fill(all(pot), inf);
+		pot[s] = 0;
+		int steps = size(pot);
+		for (char changed = 1; changed-- && steps--;)
+			rep(u, ssize(pot))
+				if (pot[u] != inf)
+					for (int i : adj[u])
+						if (num w = pot[u] + e[i].cost; e[i].from == u && w < pot[e[i].to])
+							pot[e[i].to] = w, changed = 1;
+		assert(steps >= 0); // Negative Cost Cycle
+	};
 };
 
-// Performance: About 25% percent slower than kactl code.
+// Performance: About equal to kactl
 // Unlike kactl, supports multi-edges, flow and cost limits
 /* Janky testing code
  * void solve() {
