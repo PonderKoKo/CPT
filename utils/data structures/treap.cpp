@@ -2,8 +2,13 @@
 // Tree Heap
 using Node = struct Implicitreap*;
 struct Implicitreap {
+    static unsigned random_priority() {
+        static mt19937 rng(static_cast<unsigned>(chrono::steady_clock::now().time_since_epoch().count()));
+        return rng();
+    }
     Node left = nullptr, right = nullptr;
-    num size = 1, priority = rand();
+    int size = 1;
+    unsigned priority = random_priority();
 
     num val;
     // TODO Optional Updates
@@ -11,7 +16,6 @@ struct Implicitreap {
     // TODO Optional Aggregates
     num sum = val, max = val;
 
-    // Call srand beforehand!
     Implicitreap(num value) : val(value) {}
 };
 
@@ -30,7 +34,7 @@ void update(Node node) {
 
 void push(Node node) {
     if (!node) return;
-    // TODO Merge Updates?
+    // TODO Merge Updates
     if (node->reversed) {
         node->reversed = false;
         swap(node->left, node->right);
@@ -41,21 +45,18 @@ void push(Node node) {
     }
 }
 
-Node merge(Node left, Node right) {
+Node join(Node left, Node right) {
     push(left), push(right);
     if (!left) return right;
     if (!right) return left;
     if (left->priority <= right->priority)
-        return left->right = merge(left->right, right), update(left), left;
+        return left->right = join(left->right, right), update(left), left;
     else
-        return right->left = merge(left, right->left), update(right), right;
+        return right->left = join(left, right->left), update(right), right;
 }
 
-Node merge(initializer_list<Node> nodes) { // TODO Make const& ?
-    Node result = nullptr;
-    for (const auto& node : nodes)
-        result = merge(result, node);
-    return result;
+Node unify(initializer_list<Node> nodes) {
+    return accumulate(all(nodes), (Node) nullptr, join);
 }
 
 // Split into pair<[0, key), [key, size)>
@@ -92,7 +93,7 @@ Implicitreap query(Node& node, num l, num r, const function<void(Node&)>& f = nu
         f(mid);
         update(mid);
     }
-    node = merge({left, mid, right});
+    node = unify({left, mid, right});
     return result;
 }
 
@@ -116,12 +117,12 @@ void change(Node& node, num i, num val) {
 
 void insert(Node& node, num i, Node other) {
     auto [left, right] = split(node, i);
-    node = merge({left, other, right});
+    node = unify({left, other, right});
 }
 
 void move(Node& node, num l, num r, num i) {
     auto [left, mid, right] = extract(node, l, r);
-    node = merge(left, right);
+    node = join(left, right);
     insert(node, i, mid);
 }
 
@@ -136,6 +137,6 @@ void iterate(Node node, const function<void(num)>& f) {
 
 Node buildImplicitreap(const seq& a) { // Naive Implementation
     return accumulate(all(a), static_cast<Node>(nullptr), [&] (Node node, num x) {
-        return merge(node, new Implicitreap(x));
+        return join(node, new Implicitreap(x));
     });
 }

@@ -1,7 +1,5 @@
 #include "../macros.h"
 
-#include "../numerical/random.cpp"
-
 template <num m>
 struct modular {
 	num a;
