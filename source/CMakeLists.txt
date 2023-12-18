@@ -8,6 +8,7 @@ add_compile_options(
         -fsanitize=address,undefined
         -fno-omit-frame-pointer
         -fno-sanitize-recover=all
+        -isystem ../..
         #-include-pch bits/stdc++.pch
 )
 add_link_options(
