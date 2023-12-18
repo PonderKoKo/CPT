@@ -9,7 +9,7 @@ struct SegTree {
 	int n;
 	vector<T> s;
 
-	explicit SegTree(num size) : n(size), s(2*n, unit) {}
+	explicit SegTree(int size) : n(size), s(2*n, unit) {}
 	void update(int pos, T val) {
 		for (s[pos += n] = val; pos /= 2;)
 			s[pos] = f(s[pos * 2], s[pos * 2 + 1]);
@@ -29,7 +29,7 @@ struct SegTree {
 		for (num i = n - 1; i > 0; --i)
 			s[i] = f(s[i * 2], s[i * 2 + 1]);
 	}
-	T operator[](num i) const { // TODO Untested
+	T operator[](int i) const { // TODO Untested
 		return s[n + i];
 	}
 

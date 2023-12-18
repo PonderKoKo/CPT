@@ -8,6 +8,7 @@
 
 using namespace std;
 using num = long long int;
+using ull = unsigned long long;
 using seq = vector<num>;
 using bits = vector<char>;
 using par = pair<num,num>;
@@ -19,6 +20,7 @@ template<typename T> ostream& operator<<(ostream& os, const vector<T>& v) { for 
 template<typename T> istream& operator>>(istream& is, vector<T>& v) { for (auto& e : v) is >> e; return is; }
 constexpr num operator ""_e(unsigned long long x) { num ans = 1; rep(i, static_cast<num>(x)) ans *= 10; return ans; }
 template<typename T> ostream& operator,(ostream& os, const T& x) { return os << x << ' '; }
+mt19937 rng(static_cast<unsigned>(chrono::steady_clock::now().time_since_epoch().count()));
 
 auto solve() {
 

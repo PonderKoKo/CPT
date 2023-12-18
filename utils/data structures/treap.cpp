@@ -2,13 +2,6 @@
 // Tree Heap
 using Node = struct Implicitreap*;
 struct Implicitreap {
-    static unsigned random_priority() {
-        static mt19937 rng(static_cast<unsigned>(chrono::steady_clock::now().time_since_epoch().count()));
-        return rng();
-    }
-    Node left = nullptr, right = nullptr;
-    int size = 1;
-    unsigned priority = random_priority();
 
     num val;
     // TODO Optional Updates
@@ -18,6 +11,11 @@ struct Implicitreap {
 
     Implicitreap(num value) : val(value) {}
 };
+int MAXT = 1e7;
+static mt19937 rng(static_cast<unsigned>(chrono::steady_clock::now().time_since_epoch().count()));
+vector<int> left(MAXT), right(MAXT), size(MAXT), priority(MAXT);
+iota(all(priority), 0);
+
 
 void update(Node node) {
     if (!node) return;
