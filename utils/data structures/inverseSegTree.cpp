@@ -2,12 +2,11 @@
 
 struct InverseSegTree {
     using T = num;
-    static constexpr T unit = 0;
     // Associative and Commutative
     static constexpr auto f = plus<>();
     num n;
     vector<T> s;
-    InverseSegTree(num size) : n(size), s(2*n, unit) {}
+    InverseSegTree(num size) : n(size), s(2*n) {}
 
     T operator[](num pos) {
         T res = s[pos += n];
