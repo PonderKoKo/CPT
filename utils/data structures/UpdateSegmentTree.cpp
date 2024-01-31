@@ -74,21 +74,6 @@ public:
 		                        update(node * 2 + 1, mid, r, ql, qr, val));
 	}
 
-	void set(num qi, T val) {
-		assert(/* i >= 0 && */qi < n);
-		set(1, 0, n, qi, val);
-	}
-
-	T set (num node, num l, num r, num qi, T val) {
-		lazily(node, l, r);
-		if (qi >= r || qi < l)
-			return a[node];
-		if (l + 1 == r)
-			return a[node] = val;
-		num mid = (l + r) / 2;
-		return a[node] = q_func(set(node * 2, l, mid, qi, val), set(node * 2 + 1, mid, r, qi, val));
-	}
-
 	T lazily (num node, num l, num r) {
 		if (lazy[node] == u_neutral)
 			return a[node];
