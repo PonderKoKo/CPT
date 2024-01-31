@@ -1,7 +1,10 @@
-#include "bits/stdc++.h"
-#ifndef DEBUG
+#include <bits/stdc++.h>
+#ifdef DEBUG
+#define dbg(z) cerr << #z << " = " << (z) << endl;
+#else
 #pragma GCC optimize("Ofast,unroll-loops")
 #pragma GCC target("avx2,popcnt,lzcnt,abm,bmi,bmi2,fma,tune=native")
+#define dbg(z) ;
 #endif
 #define rep(a, b) for (num a = 0; a < (b); ++a)
 #define all(a) (a).begin(), (a).end()
