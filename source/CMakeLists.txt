@@ -1,3 +1,9 @@
+add_compile_options(-isystem /Users/konradletz/Documents/projects/CPT)
+if (CMAKE_BUILD_TYPE MATCHES Release)
+    add_compile_options(
+            -O2
+    )
+else()
 add_compile_options(
         -Wall -Wextra -Wshadow -Wfloat-equal -Wconversion
         -O0
@@ -8,7 +14,7 @@ add_compile_options(
         -fsanitize=address,undefined
         -fno-omit-frame-pointer
         -fno-sanitize-recover=all
-        -isystem ../..
+        -fno-optimize-sibling-calls
         #-include-pch bits/stdc++.pch
 )
 add_link_options(
@@ -16,9 +22,5 @@ add_link_options(
         -fno-omit-frame-pointer
 )
 endif()
-if (CMAKE_BUILD_TYPE MATCHES Release)
-    add_compile_options(
-            -O2
-    )
 endif()
 add_executable(example example.cpp)
