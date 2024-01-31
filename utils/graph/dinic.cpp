@@ -26,7 +26,7 @@ struct Dinic {
     }
     num calc(num s, num t) {
         num flow = 0; q[0] = s;
-        rep(L, 31) do { // ’ int L=30’ maybe f a s t e r for random data
+        rep(L, 31) do {
                 lvl = ptr = seq(size(q));
                 num qi = 0, qe = lvl[s] = 1;
                 while (qi < qe && !lvl[t]) {
