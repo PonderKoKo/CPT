@@ -80,9 +80,21 @@ struct modular {
 		return factorials[n];
 	}
 
-	static modular binom(int n, int k) {
-		return k < 0 || k > n ? 0 : factorial(n) / (factorial(k) * factorial(n - k));
-	}
+    static modular ifactorial(int n) {
+        static vector<modular> ifactorials{1};
+        if (n >= ssize(ifactorials)) {
+            int last = bit_ceil((unsigned) n + 1), prev = ssize(ifactorials);
+            ifactorials.resize(last--);
+            ifactorials[last] = !factorial(last);
+            iota(begin(ifactorials) + prev, end(ifactorials) - 1, prev + 1);
+            partial_sum(rbegin(ifactorials), rend(ifactorials) - prev, rbegin(ifactorials), multiplies<>());
+        }
+        return ifactorials[n];
+    }
+
+    static modular binom(int n, int k) {
+        return k < 0 || k > n ? 0 : factorial(n) * ifactorial(k) * ifactorial(n - k);
+    }
 
 	static vector<modular> inverses(const vector<modular>& x) {
 		modular denominator = !reduce(all(x), modular(1), multiplies<>());
@@ -95,10 +107,16 @@ struct modular {
 	}
 
 	// Polynomial Hashes
-	static modular base() {
+	static modular base(int i = 1) {
 		static mt19937 rng(static_cast<unsigned>(chrono::steady_clock::now().time_since_epoch().count()));
-		static modular b{uniform_int_distribution<num>(7_e, 9_e)(rng)};
-		return b;
+		static vector<modular> b{1, uniform_int_distribution<num>(7_e, 9_e)(rng)}, ib{1, !b[1]};
+        auto& c = i >= 0 ? b : ib;
+        i = abs(i);
+        if (i >= (1 << 25))
+            return c[1] ^ i;
+        while (ssize(c) <= i)
+            c.push_back(c.back() * c[1]);
+        return c[i];
 	}
 	static modular hash(const auto& s) {
 		return accumulate(rbegin(s), rend(s), modular(0), [] (modular acc, const auto& x) { return acc * base() + x; });
@@ -106,7 +124,9 @@ struct modular {
 	static modular place(num i, num x) {
 		return modular(x) >> i;
 	}
-	modular& operator>>= (num i) { return *this *= base() ^ i; }
+	modular& operator>>= (num i) {
+        return *this *= base(i);
+    }
 	modular& operator<<= (num i) { return *this >>= -i; }
 	friend modular operator>> (modular self, num i) { return self >>= i; }
 	friend modular operator<< (modular self, num i) { return self <<= i; }
@@ -117,4 +137,4 @@ struct modular {
 using mod = modular<9_e + 7>;
 
 // using mod = modular<998'244'353>;
-// using hashmod = modular<4'611'686'018'427'387'847ll>;
+// using hashmod = modular<9'223'372'036'854'771'239ll>;
