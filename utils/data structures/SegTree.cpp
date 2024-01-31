@@ -29,7 +29,7 @@ struct SegTree {
 		for (num i = n - 1; i > 0; --i)
 			s[i] = f(s[i * 2], s[i * 2 + 1]);
 	}
-	T operator[](int i) const { // TODO Untested
+	T operator[](int i) const {
 		return s[n + i];
 	}
 
