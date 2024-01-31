@@ -22,25 +22,21 @@ struct CmpSparseTable {
 	}
 };
 
-template<typename T>
+template<typename T, typename cmp = less<>> // less => max, greater => min
 struct OpSparseTable {
-#define op(x, y) min(x, y)
+    Table<T> m;
 
-	Table<T> m;
+    OpSparseTable(const vector<T>& a) : m(bit_width(size(a)), vector<T>(size(a))) {
+        if (!empty(a)) m[0].assign(all(a)); // !empty check specifically added for LCA which may construct an empty ST
+        rep(l, ssize(m) - 1)
+            for (num i = 0; i + (2 << l) <= ssize(a); i++)
+                m[l+1][i] = max(m[l][i], m[l][i + (1 << l)], cmp{});
+    }
 
-	OpSparseTable(const vector<T>& a) : m(bit_width(size(a)), vector<T>(size(a))) {
-		m[0].assign(all(a));
-		rep(l, ssize(m) - 1)
-			for (num i = 0; i + (2 << l) <= ssize(a); i++)
-				m[l+1][i] = op(m[l][i], m[l][i + (1 << l)]);
-	}
-
-	T query(int l, int r) const {
-		auto t = bit_width(unsigned(r - l)) - 1;
-		return op(m[t][l], m[t][r - (1 << t)]);
-	}
-
-#undef op
+    T query(int l, int r) const {
+        auto t = bit_width(unsigned(r - l)) - 1;
+        return max(m[t][l], m[t][r - (1 << t)], cmp{});
+    }
 };
 
 /* Benchmarking

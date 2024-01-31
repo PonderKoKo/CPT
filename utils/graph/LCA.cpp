@@ -4,7 +4,7 @@
 struct LCA {
 	int t = 0;
 	vector<int> d, o, r, q;
-	OpSparseTable<int> st; // min!
+	OpSparseTable<int, greater<>> st;
 	LCA(const vector<vector<int>>& adj, int root = 0) : d(size(adj)), q(d), st((dfs(0, -1, adj), r)) {}
 
 	void dfs(int u, int p, const vector<vector<int>>& adj) {
