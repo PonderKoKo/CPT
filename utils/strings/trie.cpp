@@ -2,7 +2,7 @@
 
 struct Trie {
 	// Alphabet size and first character
-	constexpr static num sigma = 26, alpha = 'a';
+	constexpr static int sigma = 26, alpha = 'a';
 	struct Node {
 		array<int,sigma> next;
 		bool end;
@@ -13,7 +13,7 @@ struct Trie {
 	vector<Node> a{1};
 
 	void insert(const auto& s) {
-		num node = 0;
+		int node = 0;
 		for (auto c : s) {
 			c -= alpha;
 			assert(0 <= c && c < sigma);
