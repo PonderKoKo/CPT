@@ -108,7 +108,6 @@ struct modular {
 
 	// Polynomial Hashes
 	static modular base(int i = 1) {
-		static mt19937 rng(static_cast<unsigned>(chrono::steady_clock::now().time_since_epoch().count()));
 		static vector<modular> b{1, uniform_int_distribution<num>(7_e, 9_e)(rng)}, ib{1, !b[1]};
         auto& c = i >= 0 ? b : ib;
         i = abs(i);
