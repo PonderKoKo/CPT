@@ -1,52 +1,68 @@
 #include "../macros.h"
 
+// Untested
 struct AhoCorasick {
-#define nx(v, c) trie[v].next[c]
-    static constexpr num sigma = 26, alpha = 'a';
+    enum {sigma = 26, alpha = 'a'};
     struct Node {
-        array<num,sigma> next{0};
-        num count = 0;
+        array<int,sigma> next{0};
+        int prev = 0, count = 0, end = -1;
+        // All optional but prev depends on end. Just delete all lines that mention the removed var.
+        // count -> number of matches ending at c
+        // end -> index of longest pattern ending at c
+        // prev -> index of next node with match (for enumerating all matches)
     };
-    vector<Node> trie;
+    vector<Node> t;
 
-    AhoCorasick(const vector<string>& patterns) : trie(1) {
-        for (const string& p : patterns) {
-            num v = 0;
-            for (num c : p) {
-                c -= alpha;
-                if (!nx(v, c))
-                    nx(v, c) = size(trie),
-                            trie.emplace_back();
-                v = nx(v, c);
-            }
-            trie[v].count++;
+    int& f(int v, char c, bool sub = 1) { return t[v].next[c - alpha * sub]; }
+
+    explicit AhoCorasick(const vector<string>& p) : t(transform_reduce(all(p), 1, plus<>(), [] (const string& x) { return size(x); })) {
+        for (int i = 1, j = 0; const string& s : p) {
+            int v = 0;
+            for (auto c : s)
+                v = f(v, c) ?: f(v, c) = i++;
+            t[v].count++;
+            t[v].end = j++;
         }
-        queue<tuple<num,num,num,num>> q;
-        for (q.emplace(0, 0, 0, 0); !q.empty(); q.pop()) {
-            auto [v, p, plink, pchar] = q.front();
-            num link = p == 0 ? 0 : nx(plink, pchar);
+        for (queue<pair<int,int>> q{{{0, 0}}}; !q.empty(); q.pop()) {
+            auto [v, link] = q.front();
             rep(c, sigma)
-            if (!nx(v, c))
-                nx(v, c) = nx(link, c);
-            else
-                q.emplace(nx(v, c), v, link, c);
-            trie[v].count += trie[link].count;
+                if (!f(v, c, 0))
+                    f(v, c, 0) = f(link, c, 0);
+                else
+                    q.emplace(f(v, c, 0), v ? f(link, c, 0) : 0);
+            t[v].count += t[link].count;
+            t[v].prev = t[link].end == -1 ? t[link].prev : link;
         }
     }
 
-    num match(const string& s, num& v) const {
-        num ans = 0;
-        for (num c : s) {
-            c -= alpha;
-            v = nx(v, c);
-            ans += trie[v].count;
-        }
+    // Returns states traversed in automaton
+    vector<int> match(const string& s, int v) {
+        vector<int> ans;
+        for (char c : s)
+            ans.push_back(v = f(v, c));
         return ans;
     }
 
-    num match(const string& s) const {
-        num v = 0;
-        return match(s, v);
+    // Pass in state-vector obtained from match.
+    num count(const vector<int>& a) {
+        return transform_reduce(all(a), 0ll, plus<>(), [&] (int v) { return t[v].count; });
     }
-#undef nx
+
+    vector<int> longest(const vector<int>& a) {
+        vector<int> b(size(a));
+        transform(all(a), begin(b), [&] (int v) { return t[v].end; });
+        return b;
+    }
+
+    Table<int> allMatches(const vector<int>& a) {
+        Table<int> b;
+        for (int v : a) {
+            b.emplace_back();
+            do {
+                if (t[v].end != -1)
+                    b.back().push_back(t[v].end);
+            } while (v = t[v].prev);
+        }
+        return b;
+    }
 };
