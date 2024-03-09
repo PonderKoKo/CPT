@@ -1,6 +1,43 @@
 #include "../macros.h"
+template<typename T = char, int sigma = 26, T alpha = 'a'>
+struct AhoCorasick {
+    struct Node {
+        array<int,sigma> next{0};
+        int count = 0, longest = -1;
+    };
+    vector<Node> t;
 
-// Untested
+    int& f(int v, int c) { return t[v].next[c - alpha]; }
+
+    AhoCorasick(const Table<T>& p) : t(1) {
+        rep(i, ssize(p)) {
+            int v = 0;
+            for (auto c : p[i])
+                v = f(v, c) ?: f(v, c) = (t.emplace_back(), size(t) - 1);
+            t[v].count++;
+            t[v].longest = i;
+        }
+        for (queue<pair<int,int>> q{{{0, 0}}}; !q.empty(); q.pop()) {
+            auto [v, link] = q.front();
+            for (auto c = alpha; c < alpha + sigma; c++)
+                if (f(v, c))
+                    q.emplace(f(v, c), v ? f(link, c) : 0);
+                else
+                    f(v, c) = f(link, c);
+            t[v].count += t[link].count;
+            if (t[v].longest == -1) t[v].longest = t[link].longest;
+        }
+    }
+
+    vector<int> match(const vector<T>& s, int v = 0) {
+        vector<int> ans;
+        for (auto c : s)
+            ans.push_back(v = f(v, c));
+        return ans;
+    }
+};
+
+/*
 struct AhoCorasick {
     enum {sigma = 26, alpha = 'a'};
     struct Node {
@@ -45,4 +82,4 @@ struct AhoCorasick {
             ans.push_back(v = f(v, c));
         return ans;
     }
-};
+};*/

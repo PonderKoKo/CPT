@@ -69,7 +69,7 @@ struct modular {
 	friend modular operator * (modular self, const modular& other) { return self *= other; }
 	friend modular operator / (modular self, const modular& other) { return self /= other; }
 	auto operator<=>(const modular& other) const = default;
-	friend ostream& operator << (ostream& stream, const modular& mod) { return stream << mod.a; }
+	friend $f::$o& operator << ($f::$o& os, const modular& mod) { return os << mod.a; }
 
 	// Combinatorics
 

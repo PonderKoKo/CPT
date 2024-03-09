@@ -23,9 +23,8 @@ struct SegTree {
 		return f(ra, rb);
 	}
 	// All Following is Optional
-	explicit SegTree(const vector<T>& a) : n(size(a)), s(2*n, unit) {
-		rep(i, n)
-			s[i + n] = a[i];
+	explicit SegTree(const vector<T>& a) : SegTree(size(a)) {
+        copy(all(a), begin(s) + n);
 		for (num i = n - 1; i > 0; --i)
 			s[i] = f(s[i * 2], s[i * 2 + 1]);
 	}

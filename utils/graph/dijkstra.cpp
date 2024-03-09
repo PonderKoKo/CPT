@@ -38,24 +38,24 @@ seq dijkstra(int source, const Table<pair<int,num>>& adj) {
 seq denseDijkstra(int u, const Table<pair<int,num>>& adj) {
 	seq dist(size(adj), -1);
 	for (dist[u] = -18_e; dist[u] < -1; dist[u] += 18_e, u = min_element(all(dist)) - begin(dist))
-		for (const auto& [v, w] : adj[u])
+		for (auto [v, w] : adj[u])
 			if (dist[v] < 0)
 				dist[v] = min(dist[v], dist[u] + w);
 	return dist;
 }
 
 // l must be >= the largest edge weight and must be one less than a power of 2
-template<typename T>
-seq shortDijkstra(int source, const Table<pair<int,T>>& adj, T l) {
-	seq dist(size(adj), 18_e);
-	dist[source] = 0;
-	Table<int> pq(l+1);
-	pq[0].push_back(source);
-	for (int d = 0; d < ssize(adj) * l; pq[d++ & l].clear())
-		for (int i = 0; i < size(pq[d & l]); i++)
-			if (dist[pq[d & l][i]] == d)
-				for (const auto& [v, w] : adj[pq[d & l][i]])
-					if (d + w < dist[v])
-						dist[v] = d + w, pq[d + w & l].push_back(v);
-	return dist;
+// Complexity: O(n * l + m)
+vector<int> shortDijkstra(int source, const Table<pair<int,int>>& adj, int l) {
+    vector<int> dist(size(adj), 9_e);
+    dist[source] = 0;
+    Table<int> pq(l+1);
+    pq[0].push_back(source);
+    for (int d = 0; d < ssize(adj) * l; pq[d++ & l].clear())
+        rep(i, size(pq[d & l])) // Index-based iteration important since we might push back into same vector
+            if (dist[pq[d & l][i]] == d)
+                for (auto [v, w] : adj[pq[d & l][i]])
+                    if (d + w < dist[v])
+                        dist[v] = d + w, pq[d + w & l].push_back(v);
+    return dist;
 }

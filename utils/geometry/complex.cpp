@@ -1,13 +1,22 @@
 #include "../macros.h"
 
-// Cross Product
-template<typename T> T operator%(const complex<T>& a, const complex<T>& b) { return (conj(a) * b).imag(); }
-template<typename T> bool turnsCCW(const complex<T>& a, const complex<T>& b) { return a % b > 0; }
+using d = double;
+using c = complex<d>;
 
+c dotcross(c a, c b) { return conj(a) * b; }
+d dot(c a, c b) { return dotcross(a, b).real(); }
+d cross(c a, c b) { return dotcross(a, b).imag(); }
 
-// UNFINISHED
-template<typename T>
-complex<T> lineIntersection(complex<T> a, complex<T> b, complex<T> p, complex<T> q) {
-	auto c = (p - a) % (b - a), d = (q - a) % (b - a);
-	return c - d ? (c * q - d * p) / (c - d) : numeric_limits<complex<T>>::max() * (!c ?: -1);
+c intersect(c a, c b, c p, c q) {
+    d x = cross(p - a, b - a), y = cross(q - a, b - a);
+    return (x * q - y * p) / (x - y);
+}
+
+int side(c s, c t, c p) {
+    d x = cross(t - s, p - s);
+    return (x > 0) - (x < 0);
+}
+
+bool onSegment(c s, c t, c p) {
+    return !side(s, t, p) && dot(s - p, t - p) <= 0;
 }

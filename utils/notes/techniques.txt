@@ -7,3 +7,5 @@ In 2D DP, where next layer depends on ranges in previous layer, optimize with pr
 In bit problems, split upper/lower bits or consider all bits separately.
 
 If you should count all tuples (a, ..., c) that fulfill a property, and just fixing as many as you can within time constraints and counting the remaining ones doesn't work, come up with another property of the tuple and fix that (count all tuples simultaneously that fulfill that property)
+
+Sometimes we can cheese problems with quadratic solutions, but cache-friendliness is key. Using HLD to reorder (renumber) vertices can help for tree path problems.

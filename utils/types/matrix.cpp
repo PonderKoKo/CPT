@@ -38,3 +38,20 @@ struct Matrix {
     Matrix& operator*= (const Matrix& other) { return *this = *this * other; }
     Matrix& operator^= (num power) { return *this = *this ^ power; }
 };
+
+/* Matrix& operator+= (const Matrix& other) {
+        assert(cols() == other.cols() && rows() == other.rows());
+        rep(i, rows()) rep(j, cols())
+            a[i][j] += other.a[i][j];
+        return *this;
+    }
+
+    friend Matrix operator- (Matrix m) {
+        rep(i, m.rows()) rep(j, m.cols())
+            m[i][j] *= -1;
+        return m;
+    }
+
+    Matrix& operator-= (const Matrix& other) { return *this += -other; }
+ *
+ */
