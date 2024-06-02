@@ -1,57 +1,25 @@
 #include "../macros.h"
 
-template<typename T>
+template<typename T, auto f = multiplies<T>{}, auto g = plus<T>{}, auto fn = 1, auto gn = 0>
 struct Matrix {
     Table<T> a;
-
-    explicit Matrix(const Table<T>& t) : a{t} {}
-    explicit Matrix(const vector<T>& v) : a{v} {}
-    Matrix(int r, int c) : a(r, vector<T>(c)) {}
-    explicit Matrix(int rc, bool id = false) : Matrix(rc, rc) {
-        if (id) rep(i, rc) a[i][i] = 1;
-    }
-
-    int rows() const { return size(a); }
-    int cols() const { return size(a[0]); }
-
-    Matrix operator* (const Matrix& other) const {
-        assert(cols() == other.rows());
-        Matrix result(rows(), other.cols());
-        rep(i, rows()) rep(k, cols()) rep(j, other.cols())
-                    result.a[i][j] += a[i][k] * other.a[k][j];
-        return result;
-    }
-
-    Matrix expoMultiply(num power, Matrix v) const {
-        assert(rows() == cols() && v.cols() == rows());
-        assert(power >= 0);
-        for (Matrix m{*this}; power; power >>= 1, m *= m)
-            if (power & 1)
-                v *= m;
-        return v;
-    }
-
-    Matrix operator^ (num power) const {
-        return expoMultiply(power, Matrix(rows(), true));
-    }
-
-    Matrix& operator*= (const Matrix& other) { return *this = *this * other; }
-    Matrix& operator^= (num power) { return *this = *this ^ power; }
-};
-
-/* Matrix& operator+= (const Matrix& other) {
-        assert(cols() == other.cols() && rows() == other.rows());
-        rep(i, rows()) rep(j, cols())
-            a[i][j] += other.a[i][j];
-        return *this;
-    }
-
-    friend Matrix operator- (Matrix m) {
-        rep(i, m.rows()) rep(j, m.cols())
-            m[i][j] *= -1;
+    Matrix(const Table<T>& t) : a{t} {}
+    Matrix(int r, int c, T x = gn) : a(r, vector(c, x)) {}
+    Matrix(int rc = 0) : Matrix(rc, rc) { rep(i, rc) a[i][i] = fn; }
+    Matrix operator* (const Matrix& o) const {
+        Matrix m(size(a), size(o.a[0]));
+        rep(i, size(a)) rep(k, size(a[0])) rep(j, size(o.a[0]))
+                    m.a[i][j] = g(m.a[i][j], f(a[i][k], o.a[k][j]));
         return m;
     }
-
-    Matrix& operator-= (const Matrix& other) { return *this += -other; }
- *
- */
+    Matrix& em(Matrix m, num p) {
+        for (; p; p /= 2, m *= m)
+            if (p & 1)
+                *this *= m;
+        return *this;
+    }
+    Matrix operator^ (num p) const { return Matrix(size(a)).em(*this, p); }
+    Matrix& operator*= (const Matrix& other) { return *this = *this * other; }
+};
+template<typename T> using MinPlusMatrix = Matrix<T,plus<>{},ranges::min,0,numeric_limits<T>::max() / 2>;
+template<typename T> using MaxPlusMatrix = Matrix<T,plus<>{},ranges::max,0,numeric_limits<T>::min() / 2>;

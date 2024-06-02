@@ -4,7 +4,7 @@
 struct LCA {
     int t = 0;
     vector<int> d, o, r, q;
-    OpSparseTable<int, greater<>> st;
+    SparseTable<int,ranges::min> st;
     LCA(const Table<int>& adj, int root = 0) : d(size(adj)), q(d), st((dfs(root, -1, adj), r)) {}
 
     void dfs(int u, int p, const Table<int>& adj) {
@@ -26,25 +26,22 @@ struct LCA {
         return d[u] + d[v] - 2 * d[query(u, v)];
     }
 
-    // Only for virtual tree
     // Computes virtual tree in O(k log k).
     // Children are stored in aux (overwrites previous calls). Returns root of virtual tree.
-//    Table<int> aux{Table<int>(size(d))};
-//    int virtualTree(vector<int> a) {
-//        int k = size(a);
-//        assert(k);
-//        ranges::sort(a, {}, [&] (int x) { return q[x]; });
-//        rep(i, k - 1) a.push_back(query(a[i], a[i + 1]));
-//        ranges::sort(a, {}, [&] (int x) { return q[x]; });
-//        a.erase(unique(all(a)), end(a));
-//        stack<int> s{{a[0]}};
-//        for (int x : a) {
-//            while (query(s.top(), x) != s.top())
-//                s.pop();
-//            aux[s.top()].push_back(x);
-//            aux[x].clear();
-//            s.push(x);
-//        }
-//        return a[0];
-//    }
+   // Table<int> aux{Table<int>(size(d))};
+   // int virtualTree(vector<int> a) {
+   //     ranges::sort(a, {}, [&] (int x) { return q[x]; });
+   //     for (int i = size(a); --i;) a.push_back(query(a[i - 1], a[i]));
+   //     ranges::sort(a, {}, [&] (int x) { return q[x]; });
+   //     a.erase(unique(all(a)), end(a));
+   //     stack<int> s{{a[0]}};
+   //     for (int x : a) {
+   //         while (query(s.top(), x) != s.top())
+   //             s.pop();
+   //         aux[s.top()].push_back(x);
+   //         aux[x].clear();
+   //         s.push(x);
+   //     }
+   //     return a[0];
+   // }
 };

@@ -29,7 +29,7 @@ struct AhoCorasick {
         }
     }
 
-    vector<int> match(const vector<T>& s, int v = 0) {
+    vector<int> match(const vector<T>& s, auto&& v = 0) {
         vector<int> ans;
         for (auto c : s)
             ans.push_back(v = f(v, c));

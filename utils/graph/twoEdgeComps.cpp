@@ -1,25 +1,20 @@
 #include "../macros.h"
 
-seq two_edge_comps(const Graph& adj) {
-    num i = 0; // Next component index
-    seq comp(size(adj)) /* Map from node to component index */, depth(adj.size(), -1);
-    stack<num> st;
-    function<num(num,num)> dfs = [&] (num u, num d) {
-        num starting = ssize(st), up = 0; // Number of Edges to a node with lower depth
-        st.push(u);
-        depth[u] = d;
-        for (num v : adj[u]) {
-            if (depth[v] == -1) // Tree Edge
-                up += dfs(v, d + 1);
-            up += (d > depth[v]) - (d < depth[v]);
-        }
-        if (up <= 1) { // There are no Back Edges passing over u (up == 0 for root else 1)
-            while (ssize(st) > starting)
-                comp[st.top()] = i, st.pop();
-            i++;
-        }
+/* Two-Edge-Connected components in O(n + m) */
+/* Returns vector of node index to component index (indices range from 1 to |comps|). */
+vector<int> ec(const Table<int>& adj) {
+    vector<int> d(size(adj)), a(size(adj)), st;
+    int i = 0;
+    function<int(int,int)> dfs = [&] (int u, int up) {
+        st.push_back(u);
+        for (int v : adj[u])
+            up += d[v] ? (d[u] > d[v]) - (d[u] < d[v]) : (d[v] = d[u] + 1, dfs(v, -1));
+        if (!up && ++i)
+            while (!a[u])
+                a[st.back()] = i, st.pop_back();
         return up;
     };
-    dfs(0, 0);
-    return comp;
+    rep(u, ssize(adj)) if (!d[u]++) dfs(u, 0);
+    return a;
 }
+// https://judge.yosupo.jp/submission/200558

@@ -33,10 +33,6 @@ struct modular {
 	}
 
 	modular operator ! () const {
-		// [For m = 9_e + 7, 1 <= a <= 7_e]
-		// [2800ms] Clean but slow: return a == 1 ?: -(m / a / modular(m % a));
-		// [1020ms] Only for primes: return *this ^ (m - 2);
-		// [1985ms] Requires extra code: return modular(euclid(a, m).first);
 		return *this ^ (m - 2);
 	}
 
@@ -69,7 +65,7 @@ struct modular {
 	friend modular operator * (modular self, const modular& other) { return self *= other; }
 	friend modular operator / (modular self, const modular& other) { return self /= other; }
 	auto operator<=>(const modular& other) const = default;
-	friend $f::$o& operator << ($f::$o& os, const modular& mod) { return os << mod.a; }
+	friend ostream& operator << (ostream& os, const modular& mod) { return os << mod.a; }
 
 	// Combinatorics
 
@@ -106,7 +102,6 @@ struct modular {
 		return pre;
 	}
 
-	// Polynomial Hashes
 	static modular base(int i = 1) {
 		static vector<modular> b{1, uniform_int_distribution<num>(7_e, 9_e)(rng)}, ib{1, !b[1]};
         auto& c = i >= 0 ? b : ib;
@@ -117,23 +112,27 @@ struct modular {
             c.push_back(c.back() * c[1]);
         return c[i];
 	}
-	static modular hash(const auto& s) {
-		return accumulate(rbegin(s), rend(s), modular(0), [] (modular acc, const auto& x) { return acc * base() + x; });
-	}
-	static modular place(num i, num x) {
-		return modular(x) >> i;
-	}
-	modular& operator>>= (num i) {
+    static vector<modular> phash(const auto& s) {
+        vector<modular> ans(size(s) + 1);
+        rep(i, ssize(s)) ans[i + 1] = s[i] << i;
+        partial_sum(all(ans), begin(ans));
+        return ans;
+    }
+	modular& operator<<= (num i) {
         return *this *= base(i);
     }
-	modular& operator<<= (num i) { return *this >>= -i; }
+	modular& operator>>= (num i) { return *this >>= -i; }
 	friend modular operator>> (modular self, num i) { return self >>= i; }
 	friend modular operator<< (modular self, num i) { return self <<= i; }
 	struct Hash { num operator() (modular r) const { return num(r); } };
-
 #undef addIfNegative
 };
-using mod = modular<9_e + 7>;
 
 // using mod = modular<998'244'353>;
 // using hashmod = modular<9'223'372'036'854'771'239ll>;
+// 
+// Regarding operator!
+// [For m = 9_e + 7, 1 <= a <= 7_e]
+// [2800ms] Clean but slow: return a == 1 ?: -(m / a / modular(m % a));
+// [1020ms] Only for primes: return *this ^ (m - 2);
+// [1985ms] Requires extra code: return modular(euclid(a, m).first);

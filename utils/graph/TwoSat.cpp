@@ -7,24 +7,21 @@ struct TwoSat {
 	TwoSat(int n) : n(n) {}
 
 	void either(int a, int b) {
-		a = max(2 * a, 2 * ~a + 1);
-		b = max(2 * b, 2 * ~b + 1);
-		e.emplace_back(a, b ^ 1);
-		e.emplace_back(b, a ^ 1);
+		e.emplace_back(max(2 * a, 2 * ~a + 1), max(2 * b, 2 * ~b + 1));
 	}
 
-	pair<bool,vector<int>> solve() {
-		vector<int> s(2 * n + 1), q(size(e)), ans(n, -1), z;
+	vector<int> solve() {
+		vector<int> s(2 * n + 1), q(2 * size(e)), ans(n, -1), z;
 		for (const auto& [a, b] : e)
-			s[a]++;
+			s[a]++, s[b]++;
 		partial_sum(all(s), begin(s));
 		for (const auto& [a, b] : e)
-			q[--s[a]] = b;
-		function<bool(int)> dfs = [&] (int u){
+			q[--s[a]] = b ^ 1, q[--s[b]] = a ^ 1;
+		function<bool(int)> dfs = [&] (int u) {
 			z.push_back(u / 2);
 			ans[u / 2] = u % 2;
-			for (int v : span(q).subspan(s[u], s[u + 1] - s[u]))
-				if (ans[v / 2] == -1 ? dfs(v) : ans[v / 2] != v % 2)
+			for (int i = s[u]; i < s[u + 1]; i++)
+				if (ans[q[i] / 2] == -1 ? dfs(q[i]) : ans[q[i] / 2] != q[i] % 2)
 					return true;
 			return false;
 		};
@@ -39,13 +36,13 @@ struct TwoSat {
 				}
 			}
 		}
-		return {true, ans};
+		return ans;
 	}
 
 	void atMostOne(const vector<int>& v) {
 		if (size(v) > 1)
 			either(~v[0], ~v[1]);
-		for (int i = 1, p = v[0]; i + 1 < size(v); i++, p = n++) {
+		for (int i = 1, p = v[0]; i + 1 < ssize(v); i++, p = n++) {
 			either(~p, n);
 			either(~v[i], n);
 			either(~n, ~v[i+1]);

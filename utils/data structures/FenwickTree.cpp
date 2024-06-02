@@ -2,8 +2,7 @@
 
 struct FenwickTree {
     seq a;
-    FenwickTree(int n) : a(n) {}
-    FenwickTree(const seq& init) : FenwickTree(size(init)) {
+    FenwickTree(const seq& init) : a(size(init)) {
         for (int i = 0; i < ssize(a); i++) {
             a[i] += init[i];
             if (int j = i | i + 1; j < ssize(a))
@@ -24,16 +23,4 @@ struct FenwickTree {
                 x -= a[(i += z) - 1];
         return i;
     }
-};
-
-struct RangeFenwickTree {
-    FenwickTree a, b;
-    RangeFenwickTree(int n) : a(n), b(n) {}
-    RangeFenwickTree(const seq& init) : a(init), b(size(init)) {}
-    void update(int l, int r, num x) {
-        a.update(l, -x * l), a.update(r, x * r);
-        b.update(l, x), b.update(r, -x);
-    }
-    num query(int r) const { return a.query(r) + r * b.query(r); }
-    num query(int l, int r) const { return query(r) - query(l); }
 };

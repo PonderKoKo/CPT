@@ -1,54 +1,23 @@
 #include "../macros.h"
 
-num findSize(num node, num parent, seq& sizes, const vector<bool>& visited, const Graph& adj) {
-    if (visited[node])
-        return 0;
-    sizes[node] = 1;
-    for (num next : adj[node])
-        if (next != parent)
-            sizes[node] += findSize(next, node, sizes, visited, adj);
-    return sizes[node];
-}
-
-num findCentroid(num node, num parent, num total, const seq& sizes, const vector<bool>& visited, const Graph& adj) {
-    for (num next : adj[node])
-        if (next != parent && !visited[next] && sizes[next] > total / 2)
-            return findCentroid(next, node, total, sizes, visited, adj);
-    return node;
-}
-
-void centroidDecomposition(num node, num parent, const Graph& adj, vector<bool>& visited, seq& sizes) {
-    findSize(node, -1, sizes, visited, adj);
-    num centroid = findCentroid(node, -1, sizes[node], sizes, visited, adj);
-    // Parent of centroid in Centroid Tree is parent
-    // Perform centroid algo here, size of current component is sizes[node]
-    visited[centroid] = true;
-    for (num next : adj[centroid])
-        if (!visited[next])
-            centroidDecomposition(next, node, adj, visited, sizes);
-}
-
-// UNTESTED
-void centroids(const Table<int>& adj) {
-    vector<int> subtree(size(adj));
-    function<void(int,int,int)> findSubtree = [&] (int u, int p, int cp) {
-        subtree[u] = 1;
-        for (int v : adj[u])
-            if (v != p && v != cp)
-                subtree[u] += (findSubtree(v, u, cp), subtree[v]);
+void centroid_decomposition(const vector<vector<int>>& a, auto &&f) {
+    vector<int> s(size(a), 1), p(size(a), -1), q(size(a));
+    for (int qn = 1; int u : q)
+        for (int v : a[u])
+            if (v != p[u])
+                p[q[qn++] = v] = u;
+    for (int i = size(a); --i;)
+        s[p[q[i]]] += s[q[i]];
+    vector<vector<int>> b(size(a));
+    function<void(int,int)> dfs = [&] (int u, int p) {
+        for (int v : a[u])
+            if (v != p && s[v] > s[u] / 2)
+                return s[u] -= exchange(s[v], s[u]), dfs(v, p);
+        s[u] = 0;
+        for (int v : a[u])
+            if (s[v])
+                dfs(v, u), b[u].push_back(v), b[v].push_back(u);
+        f(b, u, p);
     };
-    function<int(int,int,int,int)> findCentroid = [&] (int u, int p, int cp, int thresh) {
-        for (int v : adj[u])
-            if (v != p && v != cp && subtree[v] > thresh)
-                return findCentroid(v, u, cp, thresh);
-        return u;
-    };
-    function<void(int,int)> decomp = [&] (int u, int p) {
-        findSubtree(u, -1, p);
-        int c = findCentroid(u, -1, p, subtree[u]);
-        for (int v : adj[u])
-            if (v != p)
-                decomp(v, u);
-    };
-    decomp(0, -1);
+    dfs(0, -1);
 }

@@ -1,38 +1,17 @@
 #include "../macros.h"
 
-/* Dijkstra's Algorithm for Single-Source shortest paths for nonnegative weights
- * Complexity: m log n
- */
-#ifdef PBDS
-#include <bits/extc++.h>
-#endif
-seq dijkstra(int source, const Table<pair<int,num>>& adj) {
-	seq dist(size(adj), 18_e);
-	dist[source] = 0;
-#ifdef PBDS
-	__gnu_pbds::priority_queue<pair<num,int>, greater<>> pq;
-    vector<decltype(pq)::point_iterator> it(size(adj));
-#else
+seq dijkstra(int s, const Table<pair<int,num>>& adj) {
+	seq d(size(adj), 18_e);
 	priority_queue<pair<num,int>,vector<pair<num,int>>,greater<>> pq;
-#endif
-	for (pq.push({0, source}); !empty(pq);) {
-		auto [d, u] = pq.top();
+	for (pq.emplace(d[s] = 0, s); !empty(pq);) {
+		auto [du, u] = pq.top();
 		pq.pop();
-		for (const auto& [v, w] : adj[u]) {
-            if (dist[u] + w < dist[v]) {
-                dist[v] = dist[u] + w;
-#ifdef PBDS
-                if (it[v] == end(pq))
-                    it[v] = pq.push({dist[v], v});
-                else
-                    pq.modify(it[v], {dist[v], v});
-#else
-				pq.emplace(dist[v], v);
-#endif
-            }
-        }
+		if (du == d[u])
+		    for (auto&& [v, w] : adj[u])
+				if (d[u] + w < d[v])
+				    pq.emplace(d[v] = d[u] + w, v);
 	}
-	return dist;
+	return d;
 }
 
 seq denseDijkstra(int u, const Table<pair<int,num>>& adj) {
@@ -46,7 +25,8 @@ seq denseDijkstra(int u, const Table<pair<int,num>>& adj) {
 
 // l must be >= the largest edge weight and must be one less than a power of 2
 // Complexity: O(n * l + m)
-vector<int> shortDijkstra(int source, const Table<pair<int,int>>& adj, int l) {
+template<int l>
+vector<int> shortDijkstra(int source, const Table<pair<int,int>>& adj) {
     vector<int> dist(size(adj), 9_e);
     dist[source] = 0;
     Table<int> pq(l+1);

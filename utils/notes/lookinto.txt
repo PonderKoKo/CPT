@@ -1,3 +1,3 @@
-Chain decompositions https://en.wikipedia.org/wiki/Bridge_(graph_theory)
-Generating Functions (Specifically at least evaluation and other CompProg requirements)
-Put Clear Formulation of PIE into techniques.txt (+homogenous) https://codeforces.com/blog/entry/64625
+https://codeforces.com/blog/entry/127896
+https://codeforces.com/blog/entry/72488
+rerooting template

@@ -1,46 +1,34 @@
 #include "../macros.h"
 
 /* Strongly Connected Components in Directed Graph in O(V + E)
- * Returns vector with mapping to components and number of those components.
+ * Returns vector with mapping to components (1-indexed, maximum is number of components).
  * Component Indices are in Reverse Topological Order (only edges to smaller components)
  */
-pair<seq,num> scc(Graph& adj) {
-	num n = ssize(adj);
-	seq val(n), comp(n, -1);
-	stack<num> z;
-	num time{0}, count{0};
-	function<num(num)> dfs = [&] (num j) {
-		num low = val[j] = ++time;
-		z.push(j);
-		for (num e : adj[j])
-			if (comp[e] == -1)
-				low = min(low, val[e] ?: dfs(e));
-		if (low == val[j]) {
-			num x;
-			do {
-				x = z.top();
-				z.pop();
-				comp[x] = count;
-			} while (x != j);
-			count++;
-		}
-		return val[j] = low;
-	};
-	rep(i,n)
-		if (comp[i] == -1)
-			dfs(i);
-	return make_pair(comp, count);
+vector<int> scc(const Table<int>& adj) {
+    vector<int> a(size(adj)), b(a), z;
+    int t{0}, c{0};
+    function<int(int)> dfs = [&] (int u) {
+        int d = b[u] = ++t;
+        z.push_back(u);
+        for (int v : adj[u])
+            if (!a[v])
+                d = min(d, b[v] ?: dfs(v));
+        if (d == b[u] && ++c)
+            while (!a[u])
+                a[z.back()] = c, z.pop_back();
+        return b[u] = d;
+    };
+    rep(u, size(adj)) if (!a[u]) dfs(u);
+    return a;
 }
 
 // Build Condensation Graph in O(V + E log E)
-Graph condensation(const Graph& adj, const seq& comp) {
-	Graph cadj(*max_element(all(comp)) + 1);
-	rep(i, ssize(adj))
-		for (num j : adj[i])
-			if (comp[i] != comp[j])
-				cadj[comp[i]].push_back(comp[j]);
-	for (seq& row : cadj)
-		sort(all(row)),
-				row.erase(unique(all(row)), end(row));
-	return cadj;
+Table<int> condense(const Table<int>& adj, const vector<int>& a) {
+    Table<int> c(*max_element(all(a)));
+    rep(u, size(adj)) for (int v : adj[u])
+        if (a[u] != a[v])
+            c[a[u] - 1].push_back(a[v] - 1);
+    for (auto& r : c)
+        sort(all(r)), r.erase(unique(all(r)), end(r));
+    return c;
 }
