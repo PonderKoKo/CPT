@@ -5,9 +5,8 @@ struct Rollback {
     int time() const { return size(r); }
     template<typename T> void save(T* x) { r.emplace_back(x, new T(*x), sizeof(T)); }
     void rollback(int t) {
-        while (ssize(r) > t) {
-            auto [a, b, c] = r.back();
-            memcpy(a, b, c);
+        while (time() > t) {
+        	apply(memcpy, r.back());
             r.pop_back();
         }
     }

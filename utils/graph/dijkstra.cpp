@@ -1,7 +1,7 @@
 #include "../macros.h"
 
 seq dijkstra(int s, const Table<pair<int,num>>& adj) {
-	seq d(size(adj), 18_e);
+	seq d(size(adj), 1e18);
 	priority_queue<pair<num,int>,vector<pair<num,int>>,greater<>> pq;
 	for (pq.emplace(d[s] = 0, s); !empty(pq);) {
 		auto [du, u] = pq.top();
@@ -16,7 +16,7 @@ seq dijkstra(int s, const Table<pair<int,num>>& adj) {
 
 seq denseDijkstra(int u, const Table<pair<int,num>>& adj) {
 	seq dist(size(adj), -1);
-	for (dist[u] = -18_e; dist[u] < -1; dist[u] += 18_e, u = min_element(all(dist)) - begin(dist))
+	for (dist[u] = -1e18; dist[u] < -1; dist[u] += 1e18, u = min_element(all(dist)) - begin(dist))
 		for (auto [v, w] : adj[u])
 			if (dist[v] < 0)
 				dist[v] = min(dist[v], dist[u] + w);
@@ -27,7 +27,7 @@ seq denseDijkstra(int u, const Table<pair<int,num>>& adj) {
 // Complexity: O(n * l + m)
 template<int l>
 vector<int> shortDijkstra(int source, const Table<pair<int,int>>& adj) {
-    vector<int> dist(size(adj), 9_e);
+    vector<int> dist(size(adj), 1e9);
     dist[source] = 0;
     Table<int> pq(l+1);
     pq[0].push_back(source);

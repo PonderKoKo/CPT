@@ -103,7 +103,7 @@ struct modular {
 	}
 
 	static modular base(int i = 1) {
-		static vector<modular> b{1, uniform_int_distribution<num>(7_e, 9_e)(rng)}, ib{1, !b[1]};
+		static vector<modular> b{1, uniform_int_distribution<num>(1e7, 1e9)(rng)}, ib{1, !b[1]};
         auto& c = i >= 0 ? b : ib;
         i = abs(i);
         if (i >= (1 << 25))
