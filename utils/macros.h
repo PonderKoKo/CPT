@@ -1,2 +1,2 @@
 #pragma once
-#include "source/template.cpp"
+#include "../template.cpp"

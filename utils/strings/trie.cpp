@@ -1,26 +1,8 @@
 #include "../macros.h"
 
+template<int sigma = 26, int alpha = 'a'>
 struct Trie {
-	// Alphabet size and first character
-	constexpr static int sigma = 26, alpha = 'a';
-	struct Node {
-		array<int,sigma> next;
-		bool end;
-		Node() : end{false} {
-			next.fill(-1);
-		}
-	};
-	vector<Node> a{1};
-
-	void insert(const auto& s) {
-		int node = 0;
-		for (auto c : s) {
-			c -= alpha;
-			assert(0 <= c && c < sigma);
-			if (a[node].next[c] == -1)
-				a[node].next[c] = ssize(a), a.emplace_back();
-			node = a[node].next[c];
-		}
-		a[node].end = true;
-	}
+	vector<array<int,sigma>> a{1};
+	int nx(int v, int c) { return a[v][c] ?: a[v][c] = (a.emplace_back(), size(a) - 1); }
+	int update(const auto& s, int v = 0) { for (auto&& x : s) v = nx(v, x - alpha); return v; }
 };
