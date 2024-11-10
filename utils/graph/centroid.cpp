@@ -1,6 +1,6 @@
 #include "../macros.h"
 
-void centroid_decomposition(const vector<vector<int>>& a, auto &&f) {
+void centroid(const vector<vector<int>>& a, auto &&f) {
 	vector<int> s(size(a), 1), p(size(a), -1), q(size(a));
 	for (int qn = 1; int u : q)
 		for (int v : a[u])

@@ -17,3 +17,16 @@ seq next_larger(const seq& a) {
 	}
 	return ans;
 }
+
+// Untested alternate implementation
+auto nl(const auto& a, auto c = greater<>{}, bool next = true) {
+	int n = size(a);
+	vector<int> b(n);
+	rep(i, n) {
+		int j = next ? n - i - 1 : i, k = j + (next ?: -1);
+		while (0 <= k && k < n && !c(a[j], a[k]))
+			k = b[k];
+		b[j] = k;
+	}
+	return b;
+}

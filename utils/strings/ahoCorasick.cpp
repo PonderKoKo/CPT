@@ -1,5 +1,5 @@
 #include "../macros.h"
-template<typename T = char, int sigma = 26, T alpha = 'a'>
+template<int sigma = 26, int alpha = 'a'>
 struct AhoCorasick {
     struct Node {
         array<int,sigma> next{0};
@@ -9,7 +9,7 @@ struct AhoCorasick {
 
     int& f(int v, int c) { return t[v].next[c - alpha]; }
 
-    AhoCorasick(const Table<T>& p) : t(1) {
+    AhoCorasick(const auto& p) : t(1) {
         rep(i, ssize(p)) {
             int v = 0;
             for (auto c : p[i])
@@ -27,13 +27,6 @@ struct AhoCorasick {
             t[v].count += t[link].count;
             if (t[v].longest == -1) t[v].longest = t[link].longest;
         }
-    }
-
-    vector<int> match(const vector<T>& s, auto&& v = 0) {
-        vector<int> ans;
-        for (auto c : s)
-            ans.push_back(v = f(v, c));
-        return ans;
     }
 };
 

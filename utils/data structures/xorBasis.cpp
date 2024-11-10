@@ -2,7 +2,7 @@
 
 template<int m>
 struct XORBasis {
-	using U = conditional<32 < m,ull,unsigned>::type;
+	using U = conditional_t<32 < m,ull,unsigned>;
 	array<U,m> b{};
 	#define y b[bit_width(x) - 1]
 	void update(U x) { while (x) x ^= y ?: y = x; }

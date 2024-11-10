@@ -37,7 +37,6 @@
 #include <ciso646>
 #include <climits>
 #include <csetjmp>
-#include <cstdarg>
 #include <cstddef>
 #include <cstdlib>
 
@@ -113,7 +112,6 @@
 #include <cmath>
 #include <csetjmp>
 #include <csignal>
-#include <cstdarg>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>

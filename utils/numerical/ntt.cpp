@@ -1,15 +1,13 @@
 #include "../macros.h"
-#include "../types/modular.cpp"
+#include "../types/mint.cpp"
 
-constexpr num m = 998244353;
-using mod = modular<m>;
-mod r = 3;
-void ntt(auto& a) {
+template<num m, num r>
+void ntt(vector<mint<m>>& a) {
     num n = ssize(a), L = bit_width(size(a)) - 1;
-    static vector<mod> rt(2, 1);
-    for (static num k = 2; k < n; k *= 2) {
+    static vector<mint<m>> rt(2, 1);
+    for (static int k = 2; k < n; k *= 2) {
         rt.resize(n);
-        auto z{r ^ m / 2 / k};
+        auto z{mint<m>{r} ^ m / 2 / k};
         rep(i, k)
             rt[i + k] = rt[(i + k) / 2] * (~i & 1 ?: z);
     }
@@ -30,14 +28,16 @@ void ntt(auto& a) {
     }
 }
 
-vector<mod> convolve(vector<mod> a, vector<mod> b) {
+template<num r = 3, num m = 998244353>
+vector<mint<m>> convolve(vector<mint<m>> a, vector<mint<m>> b) {
     ull s = size(a) + size(b) - 1, n = 2 * bit_floor(s);
-    vector<mod> out(n);
+    auto inverse = !mint<m>(n);
+    vector<mint<m>> out(n);
     a.resize(n), b.resize(n);
-    ntt(a), ntt(b);
-    auto inverse = !mod(n);
+    ntt<r,m>(a), ntt<r,m>(b);
     rep(i, n)
         out[-i & (n - 1)] = a[i] * b[i] * inverse;
-    ntt(out);
+    ntt<r,m>(out);
     return {begin(out), begin(out) + s};
 }
+// https://judge.yosupo.jp/submission/244769

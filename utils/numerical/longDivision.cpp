@@ -6,10 +6,10 @@
 template<typename T>
 vector<T> longDivision(vector<T> p, const vector<T>& q) {
     T inv = 1 / q.back();
-    for (num i = ssize(p); i-- >= ssize(q);) {
+    for (int i = size(p); i-- >= size(q);) {
         p[i] *= inv;
-        rep(j, ssize(q) - 1)
-            p[i - ssize(q) + j + 1] -= q[j] * p[i];
+        rep(j, size(q) - 1)
+            p[i - size(q) + j + 1] -= q[j] * p[i];
     }
     return p;
 }

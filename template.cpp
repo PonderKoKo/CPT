@@ -13,10 +13,10 @@ using num = long long;
 using ull = unsigned long long;
 using seq = vector<num>;
 template<typename T> using Table = vector<vector<T>>;
-#define dbg(a) cerr << (#a) << " = " << (a) << endl
+#define dbg(a...) (cerr, #a, '=', a) << endl
 #define rep(a, b) for (num a = 0; a < (b); ++a)
 #define all(a) begin(a), end(a)
-mt19937 rng(static_cast<unsigned>(chrono::steady_clock::now().time_since_epoch().count()));
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 auto solve() {
 	
