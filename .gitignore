@@ -4,3 +4,5 @@ input.txt
 .DS_Store
 cf/
 notes/
+cmake-build-debug/
+.idea/
