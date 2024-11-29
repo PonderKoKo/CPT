@@ -9,7 +9,7 @@ struct Matrix {
     Matrix operator* (const Matrix& o) const {
         Matrix m(size(a), size(o.a[0]));
         rep(i, size(a)) rep(k, size(a[0])) rep(j, size(o.a[0]))
-                    m.a[i][j] = g(m.a[i][j], f(a[i][k], o.a[k][j]));
+            m.a[i][j] = g(m.a[i][j], f(a[i][k], o.a[k][j]));
         return m;
     }
     Matrix& em(Matrix m, num p) {

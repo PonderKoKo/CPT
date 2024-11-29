@@ -1,24 +1,23 @@
 #include "../macros.h"
 
 // Two-Edge-Connected components in O(n + m)
-// Returns mapping node->component (1-indexed)
-// Bridges are the edges connecting two components
+// Returns mapping node->component (0-indexed).
+// Bridges are the edges connecting two components.
+// adj must be symmetric. Multi-edges and self-loops are handled.
 vector<int> tec(const Table<int>& adj) {
-	vector<int> a(size(adj)), b{a}, z;
-    int t{0}, c{0};
-    function<int(int,int)> f = [&] (int u, int up) {
-    	b[u] = ++t;
-        z.push_back(u);
+    int n = size(adj), t = 0;
+	vector<int> a(n), b(n), z(n + 1);
+    function<int(int,int)> f = [&] (int u, int x) {
+        if (b[u]) return (0 < x) - (x < 0);
+        z[b[u] = ++t] = u;
+        x = !x - 1;
         for (int v : adj[u])
-            up += b[v] ? (b[u] > b[v]) - (b[u] < b[v]) : f(v, -1);
-        if (!up && ++c)
-            while (!a[u])
-                a[z.back()] = c, z.pop_back();
-        return up;
+            x += f(v, b[u] - b[v]);
+        while (!x && ++z[0] && b[u] <= t)
+            a[z[t--]] = --z[0];
+        return x;
     };
-    rep(u, ssize(adj))
-    	a[u] || f(u, 0);
+    rep(u, n) f(u, 0);
     return a;
 }
-// https://judge.yosupo.jp/submission/244334
-// C++23: auto f = [&] (this auto&& f, int u, int up) -> int { (244336)
+// https://judge.yosupo.jp/submission/252571

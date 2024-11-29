@@ -12,7 +12,7 @@ struct SparseTable {
     }
 
     T query(int l, int r) const {
-        auto t = bit_width(unsigned(r - l)) - 1;
+        int t = bit_width(u_int(r - l)) - 1;
         return f(m[t][l], m[t][r - (1 << t)]);
     }
 };
