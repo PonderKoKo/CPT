@@ -26,4 +26,4 @@ if (CMAKE_BUILD_TYPE MATCHES Release)
             -O2
     )
 endif()
-add_executable(example example.cpp)
+add_executable(solution solution.cpp)
