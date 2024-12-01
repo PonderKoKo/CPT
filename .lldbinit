@@ -1,0 +1,8 @@
+# Fixes Debug information for STL containers.
+type synthetic add --regex '^std::__debug::vector<.+>(( )?&)?$' --python-class lldb.formatters.cpp.gnu_libstdcpp.StdVectorSynthProvider -C true
+type synthetic add --regex '^std::__debug::set<.+>(( )?&)?$' --python-class lldb_formatters.jetbrains_stl_formatters.StdSetSynthProvider -C true
+type synthetic add --regex '^std::__debug::multiset<.+>(( )?&)?$' --python-class lldb_formatters.jetbrains_stl_formatters.StdSetSynthProvider -C true
+type synthetic add --regex '^std::__debug::map<.+>(( )?&)?$' --python-class lldb.formatters.cpp.gnu_libstdcpp.StdMapLikeSynthProvider -C true
+type synthetic add --regex '^std::__debug::multimap<.+>(( )?&)?$' --python-class lldb.formatters.cpp.gnu_libstdcpp.StdMapLikeSynthProvider -C true
+type synthetic add --regex '^std::__debug::deque<.+>(( )?&)?$' --python-class lldb.formatters.cpp.gnu_libstdcpp.StdDequeSynthProvider -C true
+# relies on ~/.lldbinit being including "settings set target.load-cwd-lldbinit true"
