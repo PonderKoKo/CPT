@@ -1,2 +1,2 @@
 CompileFlags:
-  Add: [ -std=gnu++20, -Wall, -Wextra, -Wfloat-equal, -Wconversion, -Wshadow, -Wno-sign-conversion ]
+  Add: [ -std=gnu++23, -Wall, -Wextra, -Wfloat-equal, -Wconversion, -Wshadow, -Wno-sign-conversion ]
