@@ -2,6 +2,7 @@
 
 struct FenwickTree {
     seq a;
+    FenwickTree(int n) : a(n) {}
     FenwickTree(const seq& init) : a(size(init)) {
         for (int i = 0; i < ssize(a); i++) {
             a[i] += init[i];

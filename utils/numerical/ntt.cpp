@@ -2,7 +2,7 @@
 #include "../types/mint.cpp"
 
 vector<mint> convolve(vector<mint> a, vector<mint> b) {
-    assert(m == 998244353);
+    assert(mod == 998244353);
     static vector<mint> rt(2, 1);
 
     ull s = size(a) + size(b) - 1, n = 2 * bit_floor(s);
@@ -10,7 +10,7 @@ vector<mint> convolve(vector<mint> a, vector<mint> b) {
     for (static int k = 2; k < n; k *= 2) {
         rt.resize(n);
         mint z = 3; // !
-        z ^= m / 2 / k;
+        z ^= mod / 2 / k;
         rep(i, k)
             rt[i + k] = rt[(i + k) / 2] * (~i & 1 ?: z);
     }

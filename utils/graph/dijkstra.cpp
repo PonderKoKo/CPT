@@ -1,6 +1,15 @@
 #include "../macros.h"
 
-// Changed and untested
+auto bfs(int u, const Table<int>& adj) {
+    vector<int> d(size(adj), -1), p(d);
+    d[u] = 0;
+    for (queue<int> q{{u}}; !empty(q); q.pop())
+        for (int v : adj[u = q.front()])
+            if (d[v] == -1)
+                p[v] = u, d[v] = d[u] + 1, q.push(v);
+    return pair(d, p);
+}
+
 auto dijkstra(int s, const Table<pair<int,num>>& adj) {
 	seq d(size(adj), 1e18);
 	vector<int> p(size(adj), -1);
@@ -11,9 +20,9 @@ auto dijkstra(int s, const Table<pair<int,num>>& adj) {
 		if (-x == d[u])
 		    for (auto [v, w] : adj[u])
 				if (w - x < d[v])
-				    p[v] = u, q.emplace(-(d[v] = w - x), v);
+				    p[v] = u, d[v] = w - x, q.emplace(-d[v], v);
 	}
-	return pair{d, p};
+	return pair(d, p);
 }
 
 seq denseDijkstra(int u, const Table<pair<int,num>>& adj) {

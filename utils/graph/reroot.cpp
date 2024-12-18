@@ -1,28 +1,30 @@
 #include "../macros.h"
-// Potentially broken?
+
+// Requires symmetric adjacency list without multi-edges
 template<class T>
 vector<T> reroot(Table<int> adj, vector<T> a, auto&& f) {
-	Table<T> b(size(a));
-	auto dfs1 = [&] (auto&& dfs, int u, int p) -> T {
-		adj[u].erase(remove(all(adj[u]), p), end(adj[u]));
-		for (int v : adj[u])
-			b[u].push_back(dfs(dfs, v, u));
-		return accumulate(all(b[u]), a[u], f);
-	};
-	dfs1(dfs1, 0, -1);
-	auto dfs2 = [&] (auto&& dfs, int u, T p, auto l, auto r) -> void {
-		if (l == r)
-			a[u] = p;
-		else {
-			auto m = l + (r - l) / 2;
-			dfs(dfs, u, accumulate(m, r, p, f), l, m);
-			int v = adj[u][l - begin(b[u])];
-			if (l == m)
-				dfs(dfs, v, f(a[v], p), all(b[v]));
-			else
-				dfs(dfs, u, accumulate(l, m, p, f), m, r);
-		}
-	};
-	dfs2(dfs2, 0, a[0], all(b[0]));
-	return a;
+    Table<T> b(size(a));
+    [&] (this auto&& dfs, int u) -> void {
+        for (int v : adj[u]) {
+            adj[v].erase(find(all(adj[v]), u));
+            dfs(v);
+            b[u].push_back(accumulate(all(b[v]), a[v], f));
+        }
+    } (0);
+    [&] (this auto&& dfs, int u, T p, auto l, auto r) -> void {
+        if (l == r)
+            a[u] = p;
+        else {
+            auto m = l + (r - l) / 2;
+            dfs(u, accumulate(m, r, p, f), l, m);
+            int v = adj[u][l - begin(b[u])];
+            if (l == m)
+                dfs(v, f(a[v], p), all(b[v]));
+            else
+                dfs(u, accumulate(l, m, p, f), m, r);
+        }
+    } (0, a[0], all(b[0]));
+    return a;
 }
+
+// https://codeforces.com/contest/2050/submission/297105431
