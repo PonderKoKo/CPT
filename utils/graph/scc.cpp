@@ -12,9 +12,8 @@ vector<int> scc(const Table<int>& adj) {
         z[t] = u;
         b[u] = ++t;
         for (int v : adj[u])
-            if (f(v), b[v] < b[u])
-                b[u] = b[v], a[u] = 1;
-        if (a[u] && --c) while (b[u] <= t)
+            f(v), b[u] = min(b[u], b[v]);
+        if (u == z[b[u] - 1] && --c) while (b[u] <= t)
             a[z[--t]] = ~c, b[z[t]] = 1e9;
     };
     rep(u, n) f(u);
