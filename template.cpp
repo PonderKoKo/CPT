@@ -18,7 +18,9 @@ template<typename T> using Table = vector<vector<T>>;
 #define all(a) begin(a), end(a)
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
-// auto solve() { }
+auto solve() {
+    
+}
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);

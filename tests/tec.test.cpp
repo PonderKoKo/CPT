@@ -2,7 +2,8 @@
 
 #include "../utils/graph/tec.cpp"
 
-auto solve() {
+int main() {
+    cin.tie(0)->sync_with_stdio(0);
     int n, m;
     cin >> n >> m;
     Table<int> adj(n);
