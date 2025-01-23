@@ -19,4 +19,3 @@ vector<int> scc(const Table<int>& adj) {
     rep(u, n) f(u);
     return a;
 }
-// https://judge.yosupo.jp/submission/263122

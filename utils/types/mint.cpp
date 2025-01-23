@@ -1,7 +1,7 @@
 #pragma once
 #include "../macros.h"
 
-constexpr num mod = ~42256ull/4;
+constexpr num mod = 998244353; // ~42256ull/4 for hashing
 struct mint {
     num a;
     mint(num x = 0) : a{x % mod} { if (a < 0) a += mod; }

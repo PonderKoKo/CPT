@@ -37,4 +37,3 @@ vector<mint> convolve(vector<mint> a, vector<mint> b) {
     ntt(out);
     return {begin(out), begin(out) + s};
 }
-// https://judge.yosupo.jp/submission/253806

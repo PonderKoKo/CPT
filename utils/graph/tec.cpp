@@ -19,4 +19,3 @@ vector<int> tec(const Table<int>& adj) {
     rep(u, n) f(u, 0);
     return a;
 }
-// https://judge.yosupo.jp/submission/262950
