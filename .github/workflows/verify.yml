@@ -68,7 +68,7 @@ jobs:
     strategy:
       matrix:
         index:
-          ["a", "b", "c", "d", "e"]
+          ["00", "01", "02", "03", "04"]
     steps:
       - uses: actions/checkout@v4
 
