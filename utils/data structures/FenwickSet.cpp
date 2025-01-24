@@ -8,5 +8,5 @@ struct FenwickSet : FenwickTree {
     int lower_bound(int x) { return search(sum(x) + 1); } // Smallest y >= x.
     int prev(int x) { return search(sum(x)); } // Largest y < x.
     int find_by_order(num i) { return search(i + 1); } // i-th smallest element (0-indexed)
-    int order_of_key(int x) { return sum(x); } // Number of y < x.
+    num order_of_key(int x) { return sum(x); } // Number of y < x.
 };
