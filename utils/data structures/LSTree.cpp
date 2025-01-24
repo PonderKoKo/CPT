@@ -1,47 +1,34 @@
-#include "../macros.h"
-#include <limits>
+#include "../types/mint.cpp"
 
 struct LSTree {
-	using Q = num; // !!
-	using U = num; // !!
-	LSTree(int n) : q(2 * n, numeric_limits<num>::min()), u(2 * n, 0) {} // !!x2
-	static Q qf(Q a, Q b) { return max(a, b); } // !!
-	void push(int v, int l, int r) {
-		q[v] += u[v]; // !!
-		if (l + 1 < r)
-			for (int c : {v + 1, v + (r - l & ~1)})
-				u[c] += u[v]; // !!
-		u[v] = u[0];
-	}
-	
-	vector<Q> q;
-	vector<U> u;
-#define op(f, qr, a, b, c, d...)								\
-	Q f(int ql, d, int v = 1, int l = 0, int r = 0) {			\
-		push(v, l, r = r ?: size(q)/2);							\
-		return ql >= r || qr <= l  ? a							\
-			 : ql <= l && r  <= qr ? b : c						\
-		qf( f(ql, d, v + 1, 		 l, (l+r) / 2),				\
-			f(ql, d, v + (r-l & ~1), (l+r) / 2, r) ); }
-	op(query, qr, q[0], q[v], , int(qr))
-	op(update, qr, q[v], (u[v] = x, push(v, l, r), q[v]), q[v] =, int(qr), U(x))
-	op(set, ql + 1, q[v], q[v] = x, q[v] =, Q(x))
+    using Q = mint; // !!
+    using U = pair<mint,mint>; // !!
+    LSTree(int n) : q(2 * n, 0), u(2 * n, {1, 0}) {} // !!x2
+    static Q qf(Q a, Q b) { return a + b; } // !!
+    void push(int v, int l, int r) {
+        q[v] = q[v] * u[v].first + (r - l) * u[v].second; // !!
+        if (l + 1 < r) for (int c : {1, r - l & ~1}) {
+                u[v + c] = {u[v + c].first * u[v].first, u[v + c].second * u[v].first + u[v].second}; // !!
+            }
+        u[v] = u[0];
+    }
+
+    vector<Q> q;
+    vector<U> u;
+
+#define op(f, qr, a, b, c, d...)\
+	Q f(int ql, d, int l = 0, int r = 0, int v = 1) {\
+		push(v, l, r = r ?: size(q) / 2);\
+		return qr <= l || r <= ql ? a\
+			 : ql <= l && r <= qr ? b : c\
+		qf( f(ql, d, l, (l+r) / 2, v + 1),\
+			f(ql, d, (l+r) / 2, r, v + (r-l & ~1)) ); }
+
+    op(query, qr, q[0], q[v], , int(qr))
+    op(update, qr, q[v], (u[v] = x, push(v, l, r), q[v]), q[v] =, int(qr), U(x))
+    op(set, ql + 1, q[v], q[v] = x, q[v] =, Q(x))
+    op(build, l + 1, , q[v] = ((Q*)a)[l], q[v] =, num(a))
 #undef op
-	
-	Q build(const vector<Q> &a, int v, int l, int r) {
-		return q[v] = l + 1 == r ? a[l] : qf(build(a, v + 1, l, (l+r) / 2), build(a, v + (r-l & ~1), (l+r) / 2, r));
-	}
-	LSTree(const vector<Q> &a) : LSTree(size(a)) { build(a, 1, 0, size(a)); }
-	int search(int ql, auto&& p) {
-		Q x{q[0]};
-		for (stack<array<int,3>> w{{{1, 0, (int) size(q) / 2}}};; w.pop()) {
-			auto [v, l, r] = w.top();
-			if (ql >= r || ql <= l && p(qf(x, q[v]), r) && (x = qf(x, q[v]), true))
-				continue;
-			if (l + 1 == r) return r;
-			w.emplace(v + (r-l & ~1), (l+r) / 2, r);
-			w.emplace(v + 1, l, (l+r) / 2);
-		}
-		return -1;
-	}
+
+    LSTree(const vector<Q> &a) : LSTree(size(a)) { build(0, num(&a[0])); }
 };
