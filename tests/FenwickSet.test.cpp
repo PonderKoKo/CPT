@@ -27,7 +27,7 @@ int main() {
         else if (x == 1)
             fs.erase(y);
         else if (x == 2)
-            cout << dec(fs.find_by_order(y)) << '\n';
+            cout << dec(fs.find_by_order(y - 1)) << '\n';
         else if (x == 3)
             cout << fs.order_of_key(y + 1) << '\n';
         else if (x == 4)
