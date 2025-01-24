@@ -12,13 +12,13 @@ int main() {
     cin >> a >> b;
     vector<num*> coords;
     for (auto& x : a) coords.push_back(&x);
-    for (auto& [x, y] : b) coords.push_back(&y);
+    for (auto& [x, y] : b) if (x != 2) coords.push_back(&y);
     seq decompress = compress(coords);
     seq init(size(decompress));
     for (auto x : a) init[x] = 1;
     FenwickSet<1> fs(init);
     auto dec = [&] (int x) -> num {
-        if (x == n || x == -1) return -1;
+        if (x == size(decompress) || x == -1) return -1;
         return decompress[x];
     };
     for (auto [x, y] : b) {
