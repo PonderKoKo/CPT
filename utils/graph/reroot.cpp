@@ -6,7 +6,7 @@ vector<T> reroot(Table<int> adj, vector<T> a, auto&& f) {
     Table<T> b(size(a));
     [&] (this auto&& dfs, int u) -> void {
         for (int v : adj[u]) {
-            adj[v].erase(find(all(adj[v]), u));
+            erase(adj[v], u);
             dfs(v);
             b[u].push_back(accumulate(all(b[v]), a[v], f));
         }

@@ -22,7 +22,7 @@ struct mint {
     
     static mint b(int i) {
         static vector<mint> a{1, 1e9 + rng()}, c{1, 1 / a[1]};
-        auto& z = i < 0 ? i = abs(i), c : a;
+        auto& z = i < 0 ? i = -i, c : a;
         while (size(z) <= i) z.push_back(z[1] * z.back());
         return z[i];
     }
