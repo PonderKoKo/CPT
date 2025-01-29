@@ -13,7 +13,8 @@ struct SegmentTree {
             s[i] = f(s[2 * i], s[2 * i + 1]);
     }
     T query(int l, int r) {
-        u_int q = l + n, i = min(q & -q, bit_floor(r - l + 0u));
-        return l + i < r ? f(s[q / i], query(l + i, r)) : s[q / i];
+        int q = l + n, i = min(countr_zero(q + 0u), bit_width(r - l + 0u) - 1);
+        l += 1 << i;
+        return l < r ? f(s[q >> i], query(l, r)) : s[q >> i];
     }
 };
