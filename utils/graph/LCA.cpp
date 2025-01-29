@@ -15,8 +15,8 @@ struct LCA {
     }
 
     int query(int u, int v) const {
-        if (u == v)
-            return u;
+        if (u == v || min(u, v) < 0)
+            return max(u, v);
         if (q[u] > q[v])
             swap(u, v);
         return o[st.query(q[u], q[v])];
@@ -28,20 +28,19 @@ struct LCA {
 
     // Computes virtual tree in O(k log k).
     // Children are stored in aux (overwrites previous calls). Returns root of virtual tree.
-   // Table<int> aux{Table<int>(size(d))};
-   // int virtualTree(vector<int> a) {
-   //     ranges::sort(a, {}, [&] (int x) { return q[x]; });
-   //     for (int i = size(a); --i;) a.push_back(query(a[i - 1], a[i]));
-   //     ranges::sort(a, {}, [&] (int x) { return q[x]; });
-   //     a.erase(unique(all(a)), end(a));
-   //     stack<int> s{{a[0]}};
-   //     for (int x : a) {
-   //         while (query(s.top(), x) != s.top())
-   //             s.pop();
-   //         aux[s.top()].push_back(x);
-   //         aux[x].clear();
-   //         s.push(x);
-   //     }
-   //     return a[0];
-   // }
+    int virtualTree(vector<int> a, Table<int>& adj) {
+        ranges::sort(a, {}, [&] (int x) { return q[x]; });
+        for (int i = size(a); --i;) a.push_back(query(a[i - 1], a[i]));
+        ranges::sort(a, {}, [&] (int x) { return q[x]; });
+        a.erase(unique(all(a)), end(a));
+        stack<int> s{{a[0]}};
+        for (int x : a) {
+            while (query(s.top(), x) != s.top())
+                s.pop();
+            adj[s.top()].push_back(x);
+            adj[x].clear();
+            s.push(x);
+        }
+        return a[0];
+    }
 };
