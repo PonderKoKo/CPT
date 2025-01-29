@@ -10,6 +10,11 @@ int main() {
     seq a(n);
     cin >> a;
     FenwickTree ft(a);
+    { // Check push_back method
+        FenwickTree ft2(0);
+        for (auto x : a) ft2.push_back(x);
+        assert(ft.a == ft2.a);
+    }
     while (q--) {
         int x, y, z;
         cin >> x >> y >> z;
