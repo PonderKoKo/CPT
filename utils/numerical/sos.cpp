@@ -9,8 +9,8 @@
  */
 seq sos(seq a) {
     assert(has_single_bit(size(a)));
-    for (uint i = 1; i < size(a); i *= 2)
-        for (uint j = i; j < size(a); j += i)
+    for (int i = 1; i < size(a); i *= 2)
+        for (int j = i; j < size(a); j += i)
             for (; j & i; j++)
                 a[j] += a[i ^ j];
     return a;
