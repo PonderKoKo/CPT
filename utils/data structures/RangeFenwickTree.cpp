@@ -3,11 +3,12 @@
 
 struct RangeFenwickTree {
     FenwickTree a, b;
-    RangeFenwickTree(const seq& init) : a(init), b(seq(size(init))) {}
-    void update(int l, int r, num x) {
-        a.update(l, -x * l), a.update(r, x * r);
-        b.update(l, x), b.update(r, -x);
+    RangeFenwickTree(const seq& init) : a(init), b(size(init)) {}
+    void add(int l, int r, num x) {
+        a.add(l, -x * l), a.add(r, x * r);
+        b.add(l, x), b.add(r, -x);
     }
-    num query(int r) const { return a.query(r) + r * b.query(r); }
-    num query(int l, int r) const { return query(r) - query(l); }
+    num sum(int l, int r) {
+        return a.sum(l, r) + r * b.sum(r) - l * b.sum(l);
+    }
 };

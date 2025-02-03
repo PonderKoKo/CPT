@@ -20,9 +20,9 @@ struct TwoSat {
         }
         return 1;
     }
-    void atMostOne(const vector<int>& v) {
-        if (size(v) > 1) either(~v[0], ~v[1]);
-        for (int i = 1, p = v[0]; ++i < size(v); p = n++)
-            either(~p, n, ~v[i - 1], n, ~v[i], ~n);
+    void atMostOne(const auto& v) {
+        for (int x : v)
+            either(~n, ~x, ~n, n + 1, ~x, n + 1), n++;
+        n++;
     }
 };

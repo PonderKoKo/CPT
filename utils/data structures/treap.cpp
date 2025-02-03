@@ -1,22 +1,20 @@
 #include "../macros.h"
 
 struct Node {
-    int l = 0, r = 0, s;
-    unsigned p = rng();
-    int x, m = x;
-    explicit Node(int x, int s = 1) : s{s}, x{x} {}
+    num x; // Value-Type
+    num min = 1e18; // Aggregates with default for null node
+    int l = 0, r = 0, s = 0, p = rng();
 };
-// Consider calling reserve
-vector<Node> v{Node(2e9, 0)};
-int node(auto x) { return v.emplace_back(x), size(v) - 1; }
-// Determines persistency
-int nx(int i) { return node(v[i]); }
-// int nx(int i) { return i; }
-
-void update(int i) {
-    v[i].s = 1 + v[v[i].l].s + v[v[i].r].s;
-    v[i].m = min({v[i].x, v[v[i].l].m, v[v[i].r].m});
+vector<Node> v(1); // Consider calling reserve
+void update(Node& u) {
+    u.s = 1 + v[u.l].s + v[u.r].s;
+    u.min = min({u.x, v[u.l].min, v[u.r].min});
 }
+int node(auto x) {
+    return update(v.emplace_back(x)), size(v) - 1;
+}
+#define nx
+// persistent: #define nx(i) node(v[i])
 
 int join(int l, int r) {
     if (!l || !r) return l ^ r;
@@ -25,28 +23,22 @@ int join(int l, int r) {
         v[c = nx(l)].r = join(v[l].r, r);
     else
         v[c = nx(r)].l = join(l, v[r].l);
-    update(c);
+    update(v[c]);
     return c;
 }
 
-pair<int,int> split(int i, int key) {
+pair<int,int> split(int i, int key) { // (num key)
     if (!i) return {0, 0};
-    int ci = nx(i);
-    if (1 + v[v[i].l].s <= key) {
-        auto [rl, rr] = split(v[i].r, key - v[v[i].l].s - 1);
-        v[ci].r = rl;
-        update(ci);
-        return {ci, rr};
+    if (v[v[i = nx(i)].l].s < key) { // (v[i].x < key)
+        auto [rl, rr] = split(v[i].r, key - v[v[i].l].s - 1); // (key)
+        v[i].r = rl;
+        update(v[i]);
+        return {i, rr};
     } else {
         auto [ll, lr] = split(v[i].l, key);
-        v[ci].l = lr;
-        update(ci);
-        return {ll, ci};
+        v[i].l = lr;
+        update(v[i]);
+        return {ll, i};
     }
 }
-
-tuple<int,int,int> extract(int i, int l, int r) {
-    auto [remainder, right] = split(i, r);
-    auto [left, mid] = split(remainder, l);
-    return {left, mid, right};
-}
+#undef nx

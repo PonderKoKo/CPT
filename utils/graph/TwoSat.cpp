@@ -25,7 +25,8 @@ struct TwoSat {
         return 1;
     }
     void atMostOne(const vector<int>& v) {
-        if (size(v) > 1) either(~v[0], ~v[1]);
+        if (size(v) <= 1) return;
+        either(~v[0], ~v[1]);
         for (int i = 1, p = v[0]; ++i < size(v); p = n++)
             either(~p, n, ~v[i - 1], n, ~v[i], ~n);
     }
