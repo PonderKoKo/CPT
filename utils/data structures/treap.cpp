@@ -1,44 +1,42 @@
 #include "../macros.h"
 
 struct Node {
-    num x; // Value-Type
-    num min = 1e18; // Aggregates with default for null node
+    num x;
+    num sum = 0; // Specify neutral aggregates (for null node).
     int l = 0, r = 0, s = 0, p = rng();
+    void update();
 };
 vector<Node> v(1); // Consider calling reserve
-void update(Node& u) {
-    u.s = 1 + v[u.l].s + v[u.r].s;
-    u.min = min({u.x, v[u.l].min, v[u.r].min});
+void Node::update() {
+    s = 1 + v[l].s + v[r].s;
+    sum = x + v[l].sum + v[r].sum; // Update aggregates
 }
-int node(auto x) {
-    return update(v.emplace_back(x)), size(v) - 1;
+int node(auto x) { // Consider adding auto... and x... below if you want multiple values.
+    return v.emplace_back(x).update(), size(v) - 1;
 }
-#define nx
-// persistent: #define nx(i) node(v[i])
-
+#define op(i, a, b) v[i /* = node(v[i]) */].a = b, v[i].update(), i // Uncomment for persistence
 int join(int l, int r) {
-    if (!l || !r) return l ^ r;
-    int c;
-    if (v[l].p < v[r].p)
-        v[c = nx(l)].r = join(v[l].r, r);
-    else
-        v[c = nx(r)].l = join(l, v[r].l);
-    update(v[c]);
-    return c;
+    return l && r ? v[l].p < v[r].p ?
+                    (op(l, r, join(v[l].r, r))) :
+                    (op(r, l, join(l, v[r].l))) :
+           l ^ r;
 }
-
-pair<int,int> split(int i, int key) { // (num key)
+template<bool by_size>
+array<int,2> split(int i, auto b) {
     if (!i) return {0, 0};
-    if (v[v[i = nx(i)].l].s < key) { // (v[i].x < key)
-        auto [rl, rr] = split(v[i].r, key - v[v[i].l].s - 1); // (key)
-        v[i].r = rl;
-        update(v[i]);
-        return {i, rr};
-    } else {
-        auto [ll, lr] = split(v[i].l, key);
-        v[i].l = lr;
-        update(v[i]);
-        return {ll, i};
-    }
+    bool q = (by_size ? v[v[i].l].s : v[i].x) < b;
+    if (by_size && q) b += ~v[v[i].l].s;
+    auto a = split<by_size>(q[&v[i].l], b);
+    a[!q] = (q[& op(i, l], a[!q]));
+    return a;
 }
-#undef nx
+#undef op
+
+void each(int i, auto&& f) { if (i) each(v[i].l, f), f(i), each(v[i].r, f); }
+
+template<bool by_size>
+array<int,3> extract(int i, auto l, auto r) {
+    auto [x, c] = split<by_size>(i, r);
+    auto [a, b] = split<by_size>(x, l);
+    return {a, b, c};
+}
