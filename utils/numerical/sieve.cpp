@@ -1,6 +1,6 @@
 #include "../macros.h"
 
-// Linear-time sieve returning list of primes and smallest factor of each number.
+// Linear-time sieve returning list of primes and smallest factor of each number < n.
 auto sieve(int N) {
     vector<int> p, q(N);
     for (int i = 2; i < N; i++) {
