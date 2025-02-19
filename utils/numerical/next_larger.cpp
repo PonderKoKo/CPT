@@ -5,7 +5,7 @@
  * Returns for each index i the (nx ? smallest j > i [or n] : biggest j < i [or -1]), such that c(a[i], a[j]).
  * Works for c in {less, greater, less_equal, greater_equal, not_equal_to}.
  */
-seq nl(const seq& a, auto c = less<>{}, bool nx = true) {
+seq next_larger(const seq& a, auto c = less<>{}, bool nx = true) {
     int n = size(a);
     seq b(n, nx ?: -1);
     rep(k, n) {
