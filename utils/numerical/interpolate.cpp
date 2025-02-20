@@ -4,9 +4,9 @@
 // Complexity: O(n + log mod)
 mint interpolate(vector<mint> a, num x) {
     mint z = 1; rep(i, size(a)) z *= i + 1; z = !z;
-    rep(i, size(a)) a[i] *= z *= size(a) - i, end(a)[~i] *= z * (-i % 2 ?: 1);
+    rep(i, size(a)) a[i] *= z *= size(a) - i, end(a)[~i] *= z;
     for (mint& q : a) q *= z, z *= x--;
-    for (z = 1; mint& q : a | views::reverse) q *= z, z *= ++x;
+    for (z = 1; mint& q : a | views::reverse) q *= z, z *= -++x;
     return reduce(all(a));
 }
 

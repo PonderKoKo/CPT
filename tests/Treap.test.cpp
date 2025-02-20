@@ -1,4 +1,4 @@
-#define PROBLEM "https://judge.yosupo.jp/problem/ordered_set"
+#define PROBLEM "https://judge.yosupo.jp/problem/ordered_set/?Treap"
 
 #include "../utils/data structures/Treap.cpp"
 
