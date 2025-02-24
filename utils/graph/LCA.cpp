@@ -13,10 +13,7 @@ struct LCA {
     }
 
     int query(int u, int v) {
-        if ((u ^ v) <= 0)
-            return u & v;
-        tie(u, v) = minmax(q[u], q[v]);
-        return o[st.query(u, v)];
+        return 0 < (u ^ v) ? o[st.query(min(q[u], q[v]), max(q[u], q[v]))] : u & v;
     }
 
     int dist(int u, int v) {
