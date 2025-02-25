@@ -14,6 +14,11 @@ int main() {
         for (auto x : a) ft2.push_back(x);
         assert(ft.a == ft2.a);
     }
+    { // Check constructor from int
+        FenwickTree ft2(n);
+        rep(i, n) ft2.add(i, a[i]);
+        assert(ft.a == ft2.a);
+    }
     { // Check search
         seq p(n + 1);
         partial_sum(all(a), begin(p) + 1);
