@@ -1,5 +1,6 @@
 #include "../macros.h"
 
+// sum(abs(supply)) * sum(abs(cost)) should fit inside an int128.
 struct NetworkSimplex {
     seq supply, p = supply, dual = (p.push_back(0), p), d = p, to, c, r;
     num n = size(supply), inf = 1, m = 0, j = 0, q = n / 3 + 1;

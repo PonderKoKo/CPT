@@ -1,6 +1,6 @@
 #include "../types/mint.cpp"
 
-// Assuming a = [P(0), P(1), ..., P(n-1)], computes P(x) for the unique polynomial P of degree n - 1.
+// Given a = [P(0), P(1), ..., P(n-1)], computes P(x) for the unique polynomial P of degree n - 1.
 // Complexity: O(n + log mod)
 mint interpolate(vector<mint> a, num x) {
     mint z = 1; rep(i, size(a)) z *= i + 1; z = !z;
