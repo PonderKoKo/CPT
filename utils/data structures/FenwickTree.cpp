@@ -2,7 +2,7 @@
 
 struct FenwickTree {
     seq a;
-    FenwickTree(auto&& b) : a(b) {
+    FenwickTree(const auto& b) : a(b) {
         rep(i, size(a))
             if ((i | i + 1) < size(a))
                 a[i | i + 1] += a[i];
