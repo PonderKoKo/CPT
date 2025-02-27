@@ -1,32 +1,46 @@
-#include "../macros.h"
+#include "../types/mint.cpp"
 
-template<auto t, auto it>
+template<auto t>
 auto convolve(auto a, auto b) {
-    a.resize(max(size(a), size(b))), b.resize(max(size(a), size(b)));
-    t(a), t(b);
+    t(a, 1), t(b, 1);
     rep(i, size(a)) a[i] *= b[i];
-    return it(a), a;
+    return t(a, 0), a;
 }
-// MAX convolve<[] (auto& a) { partial_sum(all(a), begin(a)); },[] (auto& a) { adjacent_difference(all(a), begin(a)); }>(a[0], a[1]);
-// MIN convolve<[] (auto& a) { partial_sum(rbegin(a), rend(a), rbegin(a)); },[] (auto& a) { adjacent_difference(rbegin(a), rend(a), rbegin(a)); }>(a[0], a[1]);
 
-template<int u, int v>
-void wht(seq& a) {
-    assert(has_single_bit(size(a)));
-    for (int s = 1; s < ssize(a); s *= 2)
+void AND(vector<mint>& a, bool b) {
+    for (int s = 1; s < size(a); s *= 2)
         rep(i, size(a)) if (i & s)
-            tie(a[i - s], a[i]) = pair{a[i] + u * a[i - s], a[i - s] + v * a[i]};
+            a[i ^ s] += (b ?: -1) * a[i];
 }
-// AND convolve<wht<0,1>,wht<-1,0>>
-// OR convolve<wht<1,0>,wht<0,-1>>
-// XOR convolve<wht<1,-1>,[](auto& a) { wht<1,-1>(a); for (auto& x : a) x /= size(a); }>
 
-template<bool b>
-void gcdt(seq& a) {
-    rep(u, size(a)) {
-        int i = b ? u : size(a) - u - 1;
-        for (int j = 2 * i; j < ssize(a); j += i)
+void OR(vector<mint>& a, bool b) {
+    if (b) reverse(all(a)), AND(a, b);
+    else AND(a, b), reverse(all(a));
+}
+
+void XOR(vector<mint>& a, bool b) {
+    for (int s = 1; s < size(a); s *= 2)
+        rep(i, size(a))
+            a[i] = a[i ^ s] + a[i] * (i & s ? -2 : 1);
+    if (!b) for (auto& x: a) x /= size(a);
+}
+
+void GCD(vector<mint>& a, bool b) {
+    rep(u, ssize(a) - 1) {
+        int i = b ? u + 1: size(a) + ~u;
+        for (int j = 2 * i; j < size(a); j += i)
             a[i] += a[j] * (b ?: -1);
     }
 }
-// GCD convolve<gcdt<true>,gcdt<false>>
+
+void MAX(vector<mint>& a, bool b) {
+    if (b) partial_sum(all(a), begin(a));
+    else adjacent_difference(all(a), begin(a));
+}
+
+void MIN(vector<mint>& a, bool b) {
+    if (b) reverse(all(a)), MAX(a, b);
+    else MAX(a, b), reverse(all(a));
+}
+
+// TODO Deal with sizes more elegantly. Merge with sos / zeta transform? Add Mobius Transform and Subset Sum Convolution
