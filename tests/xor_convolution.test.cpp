@@ -8,5 +8,5 @@ int main() {
     cin >> n;
     vector<mint> a(1 << n), b(a);
     cin >> a >> b;
-    cout << convolve<XOR>(a, b);
+    cout << convolve(XOR, a, b);
 }

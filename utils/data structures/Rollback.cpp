@@ -1,11 +1,10 @@
 #include "../macros.h"
 
-struct Rollback : vector<tuple<void*,void*,int>> {
-    template<typename T> void save(T* x) {
-        emplace_back(x, new T(*x), sizeof(T));
-    }
-    void rollback(int t) {
+struct Rollback : vector<pair<int*,int>> {
+    void save(auto& x) { emplace_back(&x, x); }
+    void restore(int t) {
         while (t < size())
-        	apply(memcpy, back()), pop_back();
+            *back().first = back().second, pop_back();
     }
 };
+// Can't template this to T*,T because that requires this->s everywhere.

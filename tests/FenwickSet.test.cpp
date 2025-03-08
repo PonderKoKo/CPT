@@ -1,7 +1,7 @@
 #define PROBLEM "https://judge.yosupo.jp/problem/ordered_set"
 
 #include "../utils/data structures/FenwickSet.cpp"
-#include "../utils/numerical/compress.cpp"
+#include "../utils/data structures/Compress.cpp"
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
@@ -13,7 +13,7 @@ int main() {
     vector<num*> coords;
     for (auto& x : a) coords.push_back(&x);
     for (auto& [x, y] : b) if (x != 2) coords.push_back(&y);
-    seq decompress = compress(coords);
+    Compress decompress(coords);
     seq init(size(decompress));
     for (auto x : a) init[x] = 1;
     FenwickSet<1> fs(init);
