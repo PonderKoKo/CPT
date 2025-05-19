@@ -1,29 +1,18 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(CPT)
 set (CMAKE_CXX_STANDARD 23)
-
-if (CMAKE_BUILD_TYPE MATCHES Debug)
 add_compile_options(
-        # warnings
-        -Wall -Wextra -Wshadow -Wfloat-equal -Wconversion
-        # sanitizers
-        -fsanitize=address,undefined
-        -fno-omit-frame-pointer
-        -fno-sanitize-recover=all
-        # debug mode of STL
-        -g
-        -D_GLIBCXX_DEBUG # set debug macro for libstdc++ (gcc std lib)
-        -D_LIBCPP_DEBUG # set debug macro for libc++ (clang std lib)
-        -D DEBUG
+        -Wall -Wshadow -Werror=uninitialized -Werror=return-type -Werror=return-local-addr
 )
-add_link_options(
-        -fsanitize=address,undefined
-        -fno-omit-frame-pointer
-)
-endif()
-if (CMAKE_BUILD_TYPE MATCHES Release)
+if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_compile_options(
-            -O2
+            -fsanitize=address,undefined
+            -fno-omit-frame-pointer
+            -fno-sanitize-recover=all
+            -D_LIBCPP_DEBUG
     )
+    add_link_options(-fsanitize=address,undefined)
+else()
+    add_compile_options(-O2)
 endif()
 add_executable(solution solution.cpp)
