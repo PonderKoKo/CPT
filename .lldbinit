@@ -1,8 +1,24 @@
-# Fixes Debug information for STL containers.
+# relies on ~/.lldbinit including "settings set target.load-cwd-lldbinit true"
+
+# Remove intermediate child __elems_ from std::array. Show values in summary.
+command script import formatters/stdarray.py
+type synthetic add -x "^std::(.*::)?array<[^,]+, *[0-9]+>$" --python-class stdarray.StdArrayElemForwarder -w std_array_custom_formatters
+type category enable std_array_custom_formatters
+type summary add -x "^std::(.*::)?array<[^,]+, *[0-9]+>$" --python-function stdarray.stdarray_summary
+
+# Show value of modulo-integer in summary.
+type summary add mint --inline-children --omit-names
+
+# Show sets in summary of UnionFind
+command script import formatters/unionfind.py
+type summary add UnionFind --python-function unionfind.unionfind_summary
+# type synthetic add -x UnionFind --python-class unionfind.UnionFindPrettifier -w unionfind_custom_formatters
+# type category enable unionfind_custom_formatters
+
+# Fixes Debug information for STL containers when using libstdc++ (GCC's standard library).
 # type synthetic add --regex '^std::__debug::vector<.+>(( )?&)?$' --python-class lldb.formatters.cpp.gnu_libstdcpp.StdVectorSynthProvider -C true
 # type synthetic add --regex '^std::__debug::set<.+>(( )?&)?$' --python-class lldb_formatters.jetbrains_stl_formatters.StdSetSynthProvider -C true
 # type synthetic add --regex '^std::__debug::multiset<.+>(( )?&)?$' --python-class lldb_formatters.jetbrains_stl_formatters.StdSetSynthProvider -C true
 # type synthetic add --regex '^std::__debug::map<.+>(( )?&)?$' --python-class lldb.formatters.cpp.gnu_libstdcpp.StdMapLikeSynthProvider -C true
 # type synthetic add --regex '^std::__debug::multimap<.+>(( )?&)?$' --python-class lldb.formatters.cpp.gnu_libstdcpp.StdMapLikeSynthProvider -C true
 # type synthetic add --regex '^std::__debug::deque<.+>(( )?&)?$' --python-class lldb.formatters.cpp.gnu_libstdcpp.StdDequeSynthProvider -C true
-# relies on ~/.lldbinit including "settings set target.load-cwd-lldbinit true"
