@@ -7,6 +7,13 @@ array<num,3> euclid(num a, num b) {
 	return {y - b / a * x, x, z};
 }
 
+// Find (x, y) such that ax + by = c
+pair<num,num> lde(num a, num b, num c) {
+    auto [x, y, z] = euclid(a, b);
+    assert(!(c % z));
+    return {c / z * x, c / z * y};
+}
+
 // Find x such that x = a (mod m) and x = b (mod n) or -1 if no such x exists
 num crt(num a, num m, num b, num n) {
 	auto [x, y, z] = euclid(m, n);
@@ -20,15 +27,4 @@ num crt(num a, num m, num b, num n) {
 num inv(num a, num b) {
 	auto [x, y, z] = euclid(a, b);
 	return z == 1 ? (x % b + b) % b : -1;
-}
-
-num crt(const seq& a, const seq& m) {
-	num x = 0, M = 1;
-	rep(i, a.size()) {
-		x = crt(x, M, a[i], m[i]);
-		if (x == -1)
-			return -1;
-		M *= m[i] / gcd(m[i], M);
-	}
-	return x;
 }
