@@ -12,6 +12,7 @@ struct LCA {
                 d[v] = d[u], o.push_back(u), r.push_back(q[u]), dfs(v, adj);
     }
 
+    // Most of this work is to allow -1 as a neutral element.
     int query(int u, int v) {
         return 0 < (u ^ v) ? o[st.query(min(q[u], q[v]), max(q[u], q[v]))] : u & v;
     }

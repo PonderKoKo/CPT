@@ -1,5 +1,6 @@
 #include "complex.cpp"
 
+// coordinates should have absolute value <= 10^9
 pair<c,c> closest_pair(vector<c> a) {
     set<c> s;
     ranges::sort(a, lo);

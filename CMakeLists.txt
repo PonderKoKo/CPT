@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(CPT)
 set (CMAKE_CXX_STANDARD 23)
 add_compile_options(
-        -Wall -Wshadow -Werror=uninitialized -Werror=return-type -Werror=return-local-addr
+        -Wall -Wshadow -Werror=uninitialized -Werror=return-type -Werror=return-local-addr -isystem../
 )
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_compile_options(
@@ -10,6 +10,7 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
             -fno-omit-frame-pointer
             -fno-sanitize-recover=all
             -D_LIBCPP_DEBUG
+            -g -O0
     )
     add_link_options(-fsanitize=address,undefined)
 else()

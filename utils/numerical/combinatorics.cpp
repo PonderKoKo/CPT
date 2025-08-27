@@ -18,7 +18,7 @@ mint ifac(int n) {
 	return b[n];
 }
 
-mint binom(int n, int k) {
+mint binom(num n, num k) {
 	return k < 0 || k > n ? 0 : fac(n) * ifac(k) * ifac(n - k);
 }
 

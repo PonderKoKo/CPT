@@ -3,12 +3,11 @@
 template<int sigma = 26, int alpha = 'a'>
 struct AhoCorasick {
     struct Node {
-        array<int,sigma> next{0};
-        int count = 0, longest = -1, shorter = 0;
+        int next[sigma]{}, count = 0, longest = -1, shorter = 0;
     };
-    vector<Node> t;
+    vector<Node> t{1};
     int& f(int v, int c) { return t[v].next[c - alpha]; }
-    AhoCorasick(const auto& p) : t(1) {
+    AhoCorasick(auto&& p) {
         rep(i, size(p)) {
             int v = 0;
             for (int c : p[i])

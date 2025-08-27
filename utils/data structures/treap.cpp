@@ -6,7 +6,7 @@ struct Node {
     int l = 0, r = 0, s = 0, p = rng();
     void update();
 };
-vector<Node> v(1); // Consider calling reserve
+vector<Node> v(1);
 void Node::update() {
     s = 1 + v[l].s + v[r].s;
     sum = x + v[l].sum + v[r].sum; // Update aggregates
@@ -30,9 +30,19 @@ array<int,2> split(int i, auto b) {
     a[!q] = (q[& op(i, l], a[!q]));
     return a;
 }
-#undef op
 
 void each(int i, auto&& f) { if (i) each(v[i].l, f), f(i), each(v[i].r, f); }
+// transform_reduce(all(a), 0, join, node<ll>) to construct a treap with values from a.
+
+int unite(int l, int r) { // union of separate sorted treaps. the double op is kind of wasteful for persistence.
+    if (!l || !r) return l ^ r;
+    if (v[l].p > v[r].p) swap(l, r);
+    auto [a, b] = split<0>(r, v[l].x);
+    op(l, l, unite(v[l].l, a));
+    op(l, r, unite(v[l].r, b));
+    return l;
+}
+#undef op
 
 template<bool by_size>
 array<int,3> extract(int i, auto l, auto r) {

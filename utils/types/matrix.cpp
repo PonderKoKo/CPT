@@ -1,6 +1,6 @@
 #include "../macros.h"
 
-template<typename T, auto f = multiplies<T>{}, auto g = plus<T>{}, auto fn = 1, auto gn = 0>
+template<typename T, auto f = multiplies{}, auto g = plus{}, auto fn = 1, auto gn = 0>
 struct Matrix {
     Table<T> a;
     Matrix(const Table<T>& t) : a{t} {}
@@ -21,5 +21,5 @@ struct Matrix {
     Matrix operator^ (num p) const { return Matrix(size(a)).em(*this, p); }
     Matrix& operator*= (const Matrix& other) { return *this = *this * other; }
 };
-template<typename T> using MinPlusMatrix = Matrix<T,plus<>{},ranges::min,0,numeric_limits<T>::max() / 2>;
-template<typename T> using MaxPlusMatrix = Matrix<T,plus<>{},ranges::max,0,numeric_limits<T>::min() / 2>;
+template<typename T> using MinPlusMatrix = Matrix<T,plus{},ranges::min,0,numeric_limits<T>::max() / 2>;
+template<typename T> using MaxPlusMatrix = Matrix<T,plus{},ranges::max,0,numeric_limits<T>::min() / 2>;

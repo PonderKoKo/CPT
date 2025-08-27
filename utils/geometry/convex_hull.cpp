@@ -3,15 +3,13 @@
 vector<c> convex_hull(vector<c> v) {
     if (size(v) < 2) return v;
     sort(all(v));
-    vector<c> h(size(v) + 1);
-    int s, t = 0;
+    c h[size(v) + 1], *t = h;
     rep(i, 2) {
-        s = t--;
-        for (c a : v) {
-            while (s < t-- && cross(h[t + 1] - h[t], a - h[t]) <= 0);
-            h[t += 2] = a;
+        for (c *s = t--; c a : v) {
+            while (s < t-- && cross(t[1] - *t, a - *t) <= 0);
+            *++++t = a;
         }
         reverse(all(v));
     }
-    return {begin(h), begin(h) + t - (h[0] == h[1])};
+    return {h, t - (*h == h[1])};
 }

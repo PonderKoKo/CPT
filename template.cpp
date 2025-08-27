@@ -1,9 +1,9 @@
-#include "bits/stdc++.h"
+#include <bits/stdc++.h>
 namespace std {
     ostream& operator,(ostream& os, auto&& x) { return os << x << ' '; }
     template<class T> concept rangeio = ranges::range<T> && !convertible_to<T, string>;
-    ostream& operator<<(ostream& os, const rangeio auto &v) { for (auto&& e : v) os, e; return os; }
-    istream& operator>>(istream& is, rangeio auto &v) { for (auto&& e : v) is >> e; return is; }
+    ostream& operator<<(ostream& os, rangeio auto&& v) { for (auto&& e : v) os, e; return os; }
+    istream& operator>>(istream& is, rangeio auto&& v) { for (auto&& e : v) is >> e; return is; }
     template<class T> concept tupleio = requires(T x) { get<0>(x); } && !rangeio<T>;
     ostream& operator<<(ostream& os, const tupleio auto& t) { return apply([&] (auto&&... args) { (os , ... , args); }, t), os; }
     istream& operator>>(istream& is, tupleio auto& t) { return apply([&] (auto&&... args) { (is >> ... >> args); }, t), is; }
@@ -19,7 +19,7 @@ template<typename T> using Table = vector<vector<T>>;
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 
 auto solve() {
-    
+
 }
 
 int main() {

@@ -1,6 +1,6 @@
 #define PROBLEM "https://cses.fi/problemset/task/1684/"
 
-#include "../utils/graph/TwoSat.cpp"
+#include "../../utils/graph/TwoSat.cpp"
 
 int main() {
     cin.tie(0)->sync_with_stdio(0);
